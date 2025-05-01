@@ -1,0 +1,46 @@
+<h1>SALAS DISPONIBLES</h1>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#login">Crear Sala</button>
+<div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="loginLabel">Crea la teva sala</h1>
+      </div>
+      <form  method="POST">
+          <div class="modal-body col-10">
+              <div class="form-group">
+                  <label for="user">Nom:</label>
+                  <input type="text" class="form-control" id="user" name="user" required>
+                </div>
+                <div class="form-group mt-1">
+                  <label for="pswd">Jugadors:</label>
+                  <input type="password" class="form-control" id="pswd" name="pswd" required>
+                </div>
+          </div>
+          <div class="modal-footer">
+              <button type="submit" class="btn btn_normal" name="accion" value="login">Logina</button>
+              <button type="button" class="btn btn_outline" data-bs-dismiss="modal">Close</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="salas" class="position-absolute">
+  <div *ngFor="let message of messages" >
+    @for(sala of message.response.salas; track sala.id){
+      <div class="d-flex flex-row m-4 sala">
+        <div class="d-flex flex-column me-3">
+          <span><b>Nom:</b> {{sala.name}}</span>
+          <span><b>Jugadors:</b> {{sala.connect}}/{{sala.max}}</span>
+        </div>
+          @if(sala.connect < sala.max){
+            <button class="btn btn-primary">Unir-se</button>
+          }@else {
+            <span style="color:red">Sala Completa!</span>
+          }
+
+      </div>
+    }
+  </div>
+</div>

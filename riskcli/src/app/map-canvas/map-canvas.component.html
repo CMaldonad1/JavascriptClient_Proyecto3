@@ -1,0 +1,10 @@
+<div class="d-flex position-relative">
+  <h5 #countrybox class="position-absolute"></h5>
+  <!-- Mapa visible -->
+  <canvas #visibleCanvas width="1600" height="600" (mousemove)="onMouseMove($event)" (click)="onClick($event)"></canvas>
+
+  <!-- Canvas oculto con mapa de regiones -->
+  <canvas #hitCanvas width="1600" height="600" style="display: none;"></canvas>
+
+</div>
+
