@@ -1,7 +1,56 @@
-/* You can add global styles to this file, and also import other style files */
-// :root{ //elemento que hace referencia a la raiz del HTML, esta por encima de él incluso
-//   color-scheme: ligth dark;
-// }
+@font-face{
+  font-family: FinalFantasy;
+  src: url("/fonts/finalf.ttf") format('truetype');
+}
+html, body{
+  height: 100%;
+  width: 100%;
+}
 body{
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'FinalFantasy';
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-image: url(../public/img/background.jpg);
+  #minirisk, #disconnect, #tornarLobby{
+    position:absolute;
+  }
+  #minirisk{
+    width:80px;
+    height:50px;
+    left: 4%;
+    top: 2%;
+  }
+  .error{
+    color:red;
+    font-weight: bold;
+    text-shadow:     3px 1px 3px rgb(198, 228, 27),
+    0 0 1em rgb(210, 211, 202),
+    0 0 0.2em rgb(255, 255, 255);
+  }
+  #information{
+    height:100%;
+    width:100%;
+    .boxshadow{
+      box-shadow: 0px 0px 20px 10px rgb(223, 112, 112);
+    }
+    .boxborder{
+      background-color: white;
+      color:white;
+      font-weight: bold;
+      padding:5px;
+      border: 3px solid black;
+    }
+    .boxinside{
+      position:relative;
+      padding:30px;
+      background-color: rgb(32, 110, 226);
+    }
+    .boxinside, .boxborder, input{
+      border-radius: 20px;
+    }
+    input:hover, button:hover{
+      border-color:green;
+      box-shadow: 0px 0px 10px 5px rgb(121, 223, 112);
+    }
+  }
 }

@@ -5,10 +5,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Subscription } from 'rxjs';
 import { MapCanvasComponent } from '../map-canvas/map-canvas.component';
 import { SalasComponent } from "../salas/salas.component";
-
-export const GLOBALS = {
-  token: ''
-};
+import { GlobalService } from '../services/global.service';
 
 @Component({
   selector: 'app-login',
@@ -18,22 +15,25 @@ export const GLOBALS = {
   styleUrl: './login.component.less'
 })
 export class LoginComponent implements OnInit, OnDestroy{
-  login=false;
-  token="";
-  username="";
+  constructor(
+    public wsService: WebsocketService,
+    public global: GlobalService
+  ) {}
+  private wsSubscription!: Subscription;
+
+  error="";
   messages: any[] = [];
   ctry='';
+
   //creació del login form
   logForm: FormGroup = new FormGroup({
     user: new FormControl("",[Validators.required]),
     pswd: new FormControl("",[Validators.required])
   });
 
-  constructor(public wsService: WebsocketService ) {}
-  private wsSubscription!: Subscription; //la exclamación sirve para decirle que será inicializado
-
   userlogin(){
-    const formValue=this.logForm.value;
+    var formValue=this.logForm.value;
+    this.global.user.nom=formValue.user
     var message = { action: 'login',
                     login: {
                       user:formValue.user,
@@ -56,14 +56,13 @@ export class LoginComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.wsSubscription = this.wsService.canalLogin().subscribe(
       (message: any) => {
-        console.info(message);
-        if(message.status==200 && message.response['token']=='xx'){
-          this.login=true;
-          this.token=message.response['token'];
-          GLOBALS.token=this.token;
-          this.username=message.response['user'];
+        if(message.status==200 && message.response['token']){
+          this.global.login=true;
+          this.global.token=message.response['token'];
+          this.global.user.id=message.response['id']
+        }else{
+          this.error="Usuari i/o contrasenya incorrecta";
         }
-        this.messages.push(message);
       }
     );
   }
@@ -75,7 +74,9 @@ export class LoginComponent implements OnInit, OnDestroy{
   ngOnDestroy() {
     this.wsSubscription.unsubscribe();
     this.wsService.close();
-    console.info("Desconectado!")
-    this.login=false;
+  }
+
+  desconectar(){
+    this.global.login=false;
   }
 }

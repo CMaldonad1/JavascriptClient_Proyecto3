@@ -1,13 +1,179 @@
-#salas{
-  margin:30px;
-  background-color: blue;
-  border: 4px solid red;
-  border-radius: 10px;
-  max-height: 500px;
-  .sala{
-    background-color: wheat;
-    border: 4px solid red;
-    border-radius: 10px;
-    padding:20px;
+@silver: #C0C0C0;
+.modal-content{
+  h2, h5{
+    font-family:FinalFantasy;
+    color:white;
+  }
+  .slider{
+    -webkit-appearance: none; /* Quita el estilo por defecto en WebKit */
+    background: transparent; /* color de la barra */
+    border-radius: 5px;
+    // Firefox
+    &::-moz-range-track {
+      background: #444;
+      height: 8px;
+      border-radius: 5px;
+    }
+
+    &::-moz-range-thumb {
+      background: @silver; // color del botón
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    // Chrome, Safari, Edge
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      background: @silver; // color del botón
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      margin-top: -5px; // ajustar verticalmente
+      cursor: pointer;
+    }
+
+    &::-webkit-slider-runnable-track {
+      background: white; // color de la barra
+      height: 8px;
+      border-radius: 5px;
+    }
+  }
+}
+#disconnect{
+  left: 95%;
+  border-radius:50%;
+  top: -5%;
+  &:hover{
+    border-color:rgb(255, 153, 0);
+    box-shadow: 0px 0px 10px 5px rgb(223, 112, 112);
+  }
+}
+.roundbutton{
+  position: absolute;
+  border: none;
+  transition: 0.5s;
+  border-radius:50%;
+}
+#menubox{
+  width:450px;
+  #login{
+    #reload{
+      position:relative;
+      width:30px;
+      height:30px;
+      top:calc(30px * -0.1);
+      left:calc(30px * -0.3);
+    }
+    #salas{
+      height: 450px;
+      display:flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      position: relative;
+      color:black;
+      #llistatSalas{
+        height:250px;
+        overflow-y: scroll;
+        scrollbar-color: red @silver;
+      }
+      #btnrefresh{
+        background-color:lightgreen;
+        left:89%;
+        content:"";
+        width:35px;
+        height:35px;
+      }
+      #modalsection{
+        display: block;
+        position:relative;
+        margin-bottom:30px;
+
+        #btnmodal, #btnmodaltext, #btnrefresh{
+          position: absolute;
+          border: none;
+          transition: 0.5s;
+        }
+        #btnmodal, #btnrefresh{
+          border-radius:50%;
+          z-index: 1;
+          transform:rotate(0deg);
+        }
+        #btnmodal, #btnmodaltext{
+          color:red;
+          background-color: whitesmoke;
+        }
+        #btnmodaltext{
+          background-color:  whitesmoke;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          border-radius:50px;
+          width:0px;
+          margin-left: 2%;
+          }
+        &:hover{
+          #btnmodal{
+            transform:rotate(90deg);
+            transform-origin: 50% 50%;
+          }
+          #btnmodaltext{
+            width:100%;
+          }
+        }
+      }
+      #sala{
+        background-color: @silver;
+        position:relative;
+        border-radius: 10px;
+        padding: 4%;
+        width: 350px;
+        box-shadow: 5px 5px 10px 0px black;
+        &:before{
+          display:block;
+          position:absolute;
+          height:87%;
+          width:65%;
+          content:" ";
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+          background-image: url("../../../public/img/miniimage.jpg");
+          -webkit-mask-composite: intersect;
+          mask-composite: intersect;
+          -webkit-mask-image:
+            linear-gradient(to left, transparent, black 50%),
+            linear-gradient(to right, transparent, black 40%);
+
+          mask-image:
+            linear-gradient(to left, transparent, black 50%),
+            linear-gradient(to right, transparent, black 40%);
+          mask-composite: intersect;
+          border-radius:10px;
+          opacity:0.35;
+          margin-left: -5px;
+          margin-top: -5px;
+        }
+        #salainfo, #salastatus{
+          z-index:1;
+        }
+        #salastatus{
+          #lock{
+            position:relative;
+            width:50px;
+          }
+        }
+      }
+    }
+  }
+}
+.modal{
+  transition: 0.8s all;
+}
+@media (min-width: 576px) {
+  .modal {
+      --bs-modal-margin: 10rem !important;
   }
 }

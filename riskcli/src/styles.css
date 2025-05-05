@@ -1,4 +1,60 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: FinalFantasy;
+  src: url("/fonts/finalf.ttf") format('truetype');
+}
+html,
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  height: 100%;
+  width: 100%;
+}
+body {
+  font-family: 'FinalFantasy';
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-image: url(../public/img/background.jpg);
+}
+body #minirisk,
+body #disconnect,
+body #tornarLobby {
+  position: absolute;
+}
+body #minirisk {
+  width: 80px;
+  height: 50px;
+  left: 4%;
+  top: 2%;
+}
+body .error {
+  color: red;
+  font-weight: bold;
+  text-shadow: 3px 1px 3px #c6e41b, 0 0 1em #d2d3ca, 0 0 0.2em #ffffff;
+}
+body #information {
+  height: 100%;
+  width: 100%;
+}
+body #information .boxshadow {
+  box-shadow: 0px 0px 20px 10px #df7070;
+}
+body #information .boxborder {
+  background-color: white;
+  color: white;
+  font-weight: bold;
+  padding: 5px;
+  border: 3px solid black;
+}
+body #information .boxinside {
+  position: relative;
+  padding: 30px;
+  background-color: #206ee2;
+}
+body #information .boxinside,
+body #information .boxborder,
+body #information input {
+  border-radius: 20px;
+}
+body #information input:hover,
+body #information button:hover {
+  border-color: green;
+  box-shadow: 0px 0px 10px 5px #79df70;
 }

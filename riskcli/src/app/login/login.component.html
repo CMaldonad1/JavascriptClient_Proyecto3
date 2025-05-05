@@ -1,35 +1,45 @@
-<div class="container">
-  @if(login){
-    <button (click)="ngOnDestroy()" class="btn btn-danger">Disconnect</button>
-    <p>Bienvenido {{ username }}</p>
-    <!-- <button (click)="sendMessage()" class="btn btn-primary">Send Message</button> -->
-    <app-salas/>
+<div id="information" class="d-flex justify-content-center align-items-center flex-column">
+  @if(global.login){
+    <app-salas (logoff)="desconectar()"/>
   <!-- <app-map-canvas
     (selCountry)="getCountry($event)"
      msg="{{messages}}"
   >
   </app-map-canvas> -->
   } @else {
-    <form (ngSubmit)="userlogin()" [formGroup]="logForm">
-      <div class="d-flex flex-column col-2">
-        User: <input type="text" name="usr" id="usr" formControlName="user">
-        @if(logForm.controls['user'].errors?.['required'] && logForm.controls['user'].touched){
-          <span class="text-danger">User es obligatori</span>
-        }
-        Password: <input type="password" name="pswd" id="pswd" formControlName="pswd">
-        @if(logForm.controls['pswd'].errors?.['required'] && logForm.controls['pswd'].touched){
-          <span class="text-danger">User es obligatori</span>
-        }
+    @if(error!=""){
+      <div id="loginborder" class="boxborder mb-3">
+        <div id="login" class="boxinside d-flex p-0 justify-content-center">
+          <p class="error m-0">{{error}}</p>
+        </div>
       </div>
-      <button type="submit" [disabled]="logForm.invalid" class="btn btn-success">Connect</button>
-    </form>
-    <div class="position-absolute">
+    }
+    <div id="loginborder" class="boxborder boxshadow">
+      <div id="login" class="boxinside d-flex justify-content-center align-items-center flex-column">
+        <img src="/img/risk.png" alt="image" />
+        <form (ngSubmit)="userlogin()" [formGroup]="logForm">
+          <div class="d-flex flex-column col-12 align-items-center justify-content-center">
+            Usuari: <input type="text" name="usr" id="usr" formControlName="user">
+            @if(logForm.controls['user'].errors?.['required'] && logForm.controls['user'].touched){
+              <p class="error">User es obligatori</p>
+            }
+            Contrasenya: <input type="password" name="pswd" id="pswd" formControlName="pswd">
+            @if(logForm.controls['pswd'].errors?.['required'] && logForm.controls['pswd'].touched){
+              <p class="error">Contrasenya es obligatoria</p>
+            }
+          </div>
+          <div class="d-flex justify-content-center mt-3">
+            <button type="submit" [disabled]="logForm.invalid" class="btn">Connect</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    }
+    <!-- <div class="position-absolute">
       <div *ngFor="let message of messages" >
         {{ message.data }}
       </div>
-    </div>
-  }
-
+    </div> -->
 </div>
 
 

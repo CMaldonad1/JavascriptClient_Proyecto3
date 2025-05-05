@@ -1,13 +1,166 @@
-#salas {
-  margin: 30px;
-  background-color: blue;
-  border: 4px solid red;
-  border-radius: 10px;
-  max-height: 500px;
+.modal-content h2,
+.modal-content h5 {
+  font-family: FinalFantasy;
+  color: white;
 }
-#salas .sala {
-  background-color: wheat;
-  border: 4px solid red;
+.modal-content .slider {
+  -webkit-appearance: none;
+  /* Quita el estilo por defecto en WebKit */
+  background: transparent;
+  /* color de la barra */
+  border-radius: 5px;
+}
+.modal-content .slider::-moz-range-track {
+  background: #444;
+  height: 8px;
+  border-radius: 5px;
+}
+.modal-content .slider::-moz-range-thumb {
+  background: #C0C0C0;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+.modal-content .slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: #C0C0C0;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -5px;
+  cursor: pointer;
+}
+.modal-content .slider::-webkit-slider-runnable-track {
+  background: white;
+  height: 8px;
+  border-radius: 5px;
+}
+#disconnect {
+  left: 95%;
+  border-radius: 50%;
+  top: -5%;
+}
+#disconnect:hover {
+  border-color: #ff9900;
+  box-shadow: 0px 0px 10px 5px #df7070;
+}
+.roundbutton {
+  position: absolute;
+  border: none;
+  transition: 0.5s;
+  border-radius: 50%;
+}
+#menubox {
+  width: 450px;
+}
+#menubox #login #reload {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  top: calc(30px * -0.1);
+  left: calc(30px * -0.3);
+}
+#menubox #login #salas {
+  height: 450px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  position: relative;
+  color: black;
+}
+#menubox #login #salas #llistatSalas {
+  height: 250px;
+  overflow-y: scroll;
+  scrollbar-color: red #C0C0C0;
+}
+#menubox #login #salas #btnrefresh {
+  background-color: lightgreen;
+  left: 89%;
+  content: "";
+  width: 35px;
+  height: 35px;
+}
+#menubox #login #salas #modalsection {
+  display: block;
+  position: relative;
+  margin-bottom: 30px;
+}
+#menubox #login #salas #modalsection #btnmodal,
+#menubox #login #salas #modalsection #btnmodaltext,
+#menubox #login #salas #modalsection #btnrefresh {
+  position: absolute;
+  border: none;
+  transition: 0.5s;
+}
+#menubox #login #salas #modalsection #btnmodal,
+#menubox #login #salas #modalsection #btnrefresh {
+  border-radius: 50%;
+  z-index: 1;
+  transform: rotate(0deg);
+}
+#menubox #login #salas #modalsection #btnmodal,
+#menubox #login #salas #modalsection #btnmodaltext {
+  color: red;
+  background-color: whitesmoke;
+}
+#menubox #login #salas #modalsection #btnmodaltext {
+  background-color: whitesmoke;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 50px;
+  width: 0px;
+  margin-left: 2%;
+}
+#menubox #login #salas #modalsection:hover #btnmodal {
+  transform: rotate(90deg);
+  transform-origin: 50% 50%;
+}
+#menubox #login #salas #modalsection:hover #btnmodaltext {
+  width: 100%;
+}
+#menubox #login #salas #sala {
+  background-color: #C0C0C0;
+  position: relative;
   border-radius: 10px;
-  padding: 20px;
+  padding: 4%;
+  width: 350px;
+  box-shadow: 5px 5px 10px 0px black;
+}
+#menubox #login #salas #sala:before {
+  display: block;
+  position: absolute;
+  height: 87%;
+  width: 65%;
+  content: " ";
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-image: url("../../../public/img/miniimage.jpg");
+  -webkit-mask-composite: intersect;
+  -webkit-mask-image: linear-gradient(to left, transparent, black 50%), linear-gradient(to right, transparent, black 40%);
+  mask-image: linear-gradient(to left, transparent, black 50%), linear-gradient(to right, transparent, black 40%);
+  mask-composite: intersect;
+  border-radius: 10px;
+  opacity: 0.35;
+  margin-left: -5px;
+  margin-top: -5px;
+}
+#menubox #login #salas #sala #salainfo,
+#menubox #login #salas #sala #salastatus {
+  z-index: 1;
+}
+#menubox #login #salas #sala #salastatus #lock {
+  position: relative;
+  width: 50px;
+}
+.modal {
+  transition: 0.8s all;
+}
+@media (min-width: 576px) {
+  .modal {
+    --bs-modal-margin: 10rem !important;
+  }
 }
