@@ -1,32 +1,32 @@
-import { Component, Input, EventEmitter,ElementRef, Output,ViewChild, viewChild } from '@angular/core';
+import { Component, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebsocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
 import { GlobalService } from '../services/global.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SalaComponent } from "../sala/sala.component";
 import { Sala } from '../../class/sala/sala';
+import { User } from '../../class/user/user';
+import { Router } from '@angular/router';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-salas',
-  imports: [CommonModule, SalaComponent, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './salas.component.html',
   styleUrl: './salas.component.less'
 })
 export class SalasComponent {
   constructor(
     public wsService: WebsocketService,
-    public global: GlobalService
+    public global: GlobalService,
+    private router: Router
   ) {}
   private wsSubscription!: Subscription;
   messages: any[] = [];
   salas: Sala[] = [];
   sliderValue: number=2;
 
-  @Output() logoff= new EventEmitter<boolean>();
-  @Input() username!: string;
   @ViewChild('jugs') numjugs!: ElementRef<HTMLParagraphElement>;
   @ViewChild('modal') modal!: ElementRef<HTMLParagraphElement>;
   //creació del formulario de creación de Sala
@@ -106,6 +106,10 @@ export class SalasComponent {
         }
       }
     );
+    this.redirectSala();
+  }
+  private redirectSala(){
+    this.router.navigate(['/sala'])
   }
   desactivarSala(){
     this.salas=[];
@@ -113,7 +117,8 @@ export class SalasComponent {
     this.requestRooms();
   }
   desconectar(){
-    this.logoff.emit(false);
+    this.global.user=new User();
+    this.router.navigate([''])
   }
   ngOnDestroy() {
     this.wsSubscription.unsubscribe();

@@ -25,6 +25,7 @@ export class WebsocketService {
       if ( msg.response['token'] || msg.status== 419 ) this.canalLogin$.next(msg);
       if ( msg.response['salas'] || msg.response['sala_id']) this.canalLobby$.next(msg);
       if ( msg.response['sala']  || msg.response['players'] || msg.response['start'] || msg.response['left']) this.canalSala$.next(msg);
+      if ( msg.response['deployment'] || msg.response['countries'])  this.canalPartida$.next(msg);
     });
   }
 

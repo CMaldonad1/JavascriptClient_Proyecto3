@@ -1,36 +1,54 @@
-<div class="ms-4 mt-5 d-flex position-absolute" *ngFor="let item of [].constructor(global.sala.connected); let i = index">
-  <div id="jugador" class="boxborder jugador{{i}}">
-    <div id="{{global.jugadors[i].id}}" class="boxinside d-flex flex-column" style='background-color: {{global.jugadors[i].color}}'>
-      <div class="d-flex flex-row align-items-center position-relative">
-        <img src="/img/soldierIcon.JPG" class="icon_jugador" />
-        <h5 class="ms-3">{{global.jugadors[i].nom}}</h5>
-        @if(global.sala.admin_id==global.jugadors[i].id){
-          <img src="/img/crown.png" class="crown" />
-        }
-      </div>
-      <div class="d-flex flex-row flex-wrap justify-content-around mt-2">
-        <div class="d-flex flex-row col-5 align-items-center">
-          <img src="/img/cards.png" class="card me-1"/>
-          <div class="qty text-center">20</div>
-        </div>
-        <div class="d-flex flex-row col-5 align-items-center">
-          <img src="/img/soldier.png" class="soldier me-1"/>
-          <div class="qty text-center text-center">{{global.jugadors[i].tropas}}</div>
+<div id="information" class="d-flex flex-row">
+  <!-- Informació jugadors -->
+  <div class="ms-3 mt-2 d-flex flex-row flex-wrap col-1 position-absolute" >
+    <div *ngFor="let item of [].constructor(global.sala.connected); let i = index">
+      <div id="jugador" class="boxborder mb-1">
+        <div id="{{global.jugadors[i].id}}" class="boxinside d-flex flex-row" style='background-color: {{global.jugadors[i].color}}'>
+          <div class="d-flex flex-row align-items-center position-relative jugador{{i}}">
+            <img src="/img/soldierIcon.JPG" class="icon_jugador" />
+            @if(global.sala.admin_id==global.jugadors[i].id){
+              <img src="/img/crown.png" class="crown" />
+            }
+          </div>
+          <div id="jugInfo" class="d-flex flex-row flex-wrap justify-content-around ms-3">
+            <h5 class="ms-1 col-12 mb-0">{{global.jugadors[i].nom}} </h5>
+
+            <div class="d-flex flex-row col-6 align-items-center">
+              <img src="/img/cards.png" class="card"/>
+              <div class="qty text-center">{{global.jugadors[i]._cartas.length}}</div>
+            </div>
+            <div class="d-flex flex-row col-6 align-items-center">
+              <img src="/img/soldier.png" class="soldier"/>
+              <div class="qty text-center text-center">{{global.jugadors[i].tropas}}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- Mapas -->
+  <div id="map" class="boxborder boxshadow mt-5">
+    <div class="d-flex position-relative boxinside">
+      <button id="disconnect" type="button" class="btn btn-danger" (click)="abandonar()">⨉</button>
+      <h4 id="cntrybx" #countrybox class="position-absolute ms-3 mt-1"></h4>
+      <!-- Mapa visible -->
+      <canvas #visibleCanvas width="800" height="490" (mousemove)="onMouseMove($event)" (click)="selectCountry($event)"></canvas>
+      <!-- Canvas oculto con mapa de regiones -->
+      <canvas #hitCanvas width="800" height="490" style="display: none;"></canvas>
+    </div>
+  </div>
+  <!-- Chat d'events -->
+   <div id="missatges" class="mt-2">
+      <h3 class="text-center">Estatus Partida</h3>
+      <div id="msg">
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam commodi accusantium mollitia iste fugit excepturi aliquam, aut libero voluptatibus delectus exercitationem suscipit porro cum odio pariatur! Laboriosam corrupti ullam nostrum!
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illum assumenda pariatur itaque hic facilis modi, magnam, minima repellendus, nemo quo eum? Libero exercitationem repellat, mollitia ratione culpa nostrum nam consequuntur!
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum sunt qui, voluptatibus ipsa laboriosam fugiat ea excepturi minima ipsam laborum, deleniti delectus incidunt distinctio, eum rem. Dolores labore fuga tempore!
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo minima incidunt vero, tenetur architecto voluptas ad hic repellat eos doloribus aperiam culpa, repudiandae consectetur, tempora quas voluptates ducimus iste facilis.
+      </div>
+   </div>
 </div>
 
-<div id="map" class="boxborder boxshadow mt-5">
-  <div class="d-flex position-relative boxinside">
-    <h4 id="cntrybx" #countrybox class="position-absolute ms-3 mt-1"></h4>
-    <!-- Mapa visible -->
-    <canvas #visibleCanvas width="800" height="490" (mousemove)="onMouseMove($event)" (click)="onClick($event)"></canvas>
-    <!-- Canvas oculto con mapa de regiones -->
-    <canvas #hitCanvas width="800" height="490" style="display: none;"></canvas>
-  </div>
-</div>
 
 
 

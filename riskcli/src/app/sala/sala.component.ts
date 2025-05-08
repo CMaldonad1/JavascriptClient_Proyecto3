@@ -6,6 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { GlobalService } from '../services/global.service';
 import { User } from '../../class/user/user';
 import { Sala } from '../../class/sala/sala';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sala',
@@ -16,11 +17,11 @@ import { Sala } from '../../class/sala/sala';
 export class SalaComponent {
   constructor(
     public wsService: WebsocketService,
-    public global: GlobalService
+    public global: GlobalService,
+    private router: Router
   ) {}
   private wsSubscription!: Subscription;
 
-  @Output() tornar = new EventEmitter<string>();
   colorchoices: any[]=["#fa0000d9","#00b200d9","#0000ffd9","#fa6400d9","#c800ffd9","#645000d9"];
 
   ngOnInit() {
@@ -32,12 +33,12 @@ export class SalaComponent {
         }else if(message.response.players){
           this.infoJugadors(message.response.players);
         }else if(message.response.desconectat){
-          this.desconectaJugador(message.response.desconectat.idJug)
+          this.desconectaJugador(message.response.desconectat.idJug);
         }else if(message.response.start=='1'){
           this.global.partida=true;
-          console.info(this.global.partida);
-        }else if(message.response.left=='1'){
-          this.tornar.emit();
+          this.router.navigate(['/game'])
+        }else if(message.response.left){
+          this.router.navigate(['/lobby'])
         }
       }
     );
@@ -70,14 +71,6 @@ export class SalaComponent {
     this.sendMessage(
       {
         action:'iniciar_partida',
-        token: this.global.token
-      }
-    );
-  }
-  testafegir(){
-    this.sendMessage(
-      {
-        action:'testJugador',
         token: this.global.token
       }
     );

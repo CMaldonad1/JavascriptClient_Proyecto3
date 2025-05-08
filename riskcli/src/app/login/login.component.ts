@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { MapCanvasComponent } from '../map-canvas/map-canvas.component';
 import { SalasComponent } from "../salas/salas.component";
 import { GlobalService } from '../services/global.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,8 @@ import { GlobalService } from '../services/global.service';
 export class LoginComponent implements OnInit, OnDestroy{
   constructor(
     public wsService: WebsocketService,
-    public global: GlobalService
+    public global: GlobalService,
+    private router: Router
   ) {}
   private wsSubscription!: Subscription;
 
@@ -57,23 +59,26 @@ export class LoginComponent implements OnInit, OnDestroy{
     this.wsSubscription = this.wsService.canalLogin().subscribe(
       (message: any) => {
         if(message.status==200 && message.response['token']){
+          this.error="";
           this.global.login=true;
           this.global.token=message.response['token'];
-          this.global.user.id=message.response['id']
+          this.global.user.id=message.response['id'];
+          this.router.navigate(['/lobby'])
         }else{
           this.error="Usuari i/o contrasenya incorrecta";
         }
       }
     );
   }
-
+  test(){
+    this.router.navigate(['/lobby'])
+  }
   sendMessage(message:any) {
     this.wsService.sendMsg(message);
   }
 
   ngOnDestroy() {
     this.wsSubscription.unsubscribe();
-    this.wsService.close();
   }
 
   desconectar(){

@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { LoginComponent } from '../app/login/login.component';
 import { MapCanvasComponent } from '../app/map-canvas/map-canvas.component';
 import { SalasComponent } from "./salas/salas.component";
+import { SalaComponent } from './sala/sala.component';
 
 @Component({ //@<name> --> es un decorador. Aplica la lógica descrita a la función
   selector: 'app-root',

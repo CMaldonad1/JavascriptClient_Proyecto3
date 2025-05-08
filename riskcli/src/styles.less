@@ -25,6 +25,15 @@ body{
     left: 4%;
     top: 2%;
   }
+  #disconnect{
+    left: 95%;
+    border-radius:50%;
+    top: -5%;
+    &:hover{
+      border-color:rgb(255, 153, 0);
+      box-shadow: 0px 0px 10px 5px rgb(223, 112, 112);
+    }
+  }
   .error{
     color:red;
     font-weight: bold;
@@ -63,8 +72,6 @@ body{
       position:relative;
       padding:30px;
       background-color: rgb(32, 110, 226);
-      overflow-wrap: break-word;
-      word-break: break-word;
     }
     .boxinside, .boxborder, input{
       border-radius: 20px;

@@ -40,7 +40,9 @@ export class MapCanvasComponent {
   ngOnInit() {
     this.wsSubscription = this.wsService.canalSala().subscribe(
       (message: any) => {
+        if(message.response.deplyment){
 
+        }
       }
     );
   }
@@ -109,7 +111,7 @@ export class MapCanvasComponent {
     return country;
   }
 
-  onClick(event: MouseEvent): void {
+  selectCountry(event: MouseEvent): void {
     var info=this.eventInfo(event);
     console.info(event)
     for (let i = 0; i < info.data.length; i += 4) {
@@ -196,4 +198,8 @@ export class MapCanvasComponent {
   private isBorderColor(r: number, g: number, b: number): boolean{
     return r === 0 && g === 0 && b === 0;
   };
+
+  public abandonar(){
+    alert("Segur que vols abandonar?")
+  }
 }

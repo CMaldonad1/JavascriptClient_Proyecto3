@@ -1,10 +1,13 @@
+import { Card } from "../card/card";
+
 export class User {
   constructor(
     public _id: number=-999,
     public _nom: string = "",
     public _color: string ="",
     public _turn: boolean =false,
-    public _tropas: number=0
+    public _tropas: number=0,
+    public _cartas: Card []=[]
   ){}
   get nom(): string{
     return this._nom;

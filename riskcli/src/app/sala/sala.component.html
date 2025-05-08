@@ -1,26 +1,26 @@
-<button class="btn btn-warning" (click)="testafegir()">Afegir Jugador</button>
-<div id="sala" class="boxborder boxshadow">
-  <div id="salainterior" class="boxinside col-12 d-flex flex-column justify-content-center align-items-center">
-    <img id="minirisk" src="/img/risk.png" alt="">
-    <button id="tornarLobby" (click)="tornarLobby()" class="btn btn-danger">Tornar</button>
-    <h3><b class="me-2">SALA:</b> {{global.sala.nom}}</h3>
-    <h3><b class="me-3">Players:</b> {{global.sala.connected}} / {{global.sala.max_players}}</h3>
-    <div class="mt-3 d-flex flex-row col-11 flex-wrap justify-content-center">
-      @for(jugador of global.jugadors; track jugador.id){
-        <div class="col-5 m-1">
-          <div class="boxborder">
-            <div id="{{jugador.id}}" class="boxinside d-flex flex-row p-2 align-items-center" style='background-color: {{jugador.color}}'>
-              <img src="/img/soldierIcon.JPG" class="icon_jugador" />
-              <h5 class="ms-3">{{jugador.nom}}</h5>
-              @if(global.sala.admin_id==jugador.id){
-                <img src="/img/crown.png" class="crown" />
-              }
+<div id="information" class="d-flex justify-content-center align-items-center flex-column">
+  <div id="sala" class="boxborder boxshadow">
+    <div id="salainterior" class="boxinside col-12 d-flex flex-column justify-content-center align-items-center">
+      <img id="minirisk" src="/img/risk.png" alt="">
+      <button id="tornarLobby" (click)="tornarLobby()" class="btn btn-danger">Tornar</button>
+      <h3><b class="me-2">SALA:</b> {{global.sala.nom}}</h3>
+      <h3><b class="me-3">Players:</b> {{global.sala.connected}} / {{global.sala.max_players}}</h3>
+      <div class="mt-3 d-flex flex-row col-11 flex-wrap justify-content-center">
+        @for(jugador of global.jugadors; track jugador.id){
+          <div class="col-5 m-1">
+            <div class="boxborder">
+              <div id="{{jugador.id}}" class="boxinside d-flex flex-row p-2 align-items-center" style='background-color: {{jugador.color}}'>
+                <img src="/img/soldierIcon.JPG" class="icon_jugador" />
+                <h5 class="ms-3">{{jugador.nom}}</h5>
+                @if(global.sala.admin_id==jugador.id){
+                  <img src="/img/crown.png" class="crown" />
+                }
+              </div>
             </div>
           </div>
-        </div>
-      }
-      @if(global.sala.connected<global.sala.max_players){
-        @for( i of [].constructor(global.sala.max_players-global.sala.connected); track i){
+        }
+        @if(global.sala.connected<global.sala.max_players){
+          @for( i of [].constructor(global.sala.max_players-global.sala.connected); track i){
             <div class="col-5 m-1">
               <div class="boxborder">
                 <div class="boxinside d-flex flex-row p-2 align-items-center" style="background-color: grey;">
@@ -28,11 +28,12 @@
                 </div>
               </div>
             </div>
+          }
         }
+      </div>
+      @if(global.sala.admin_id==global.user.id){
+        <button class="btn btn-warning mt-3" (click)="iniciarPartida()" [disabled]="global.sala.connected>=2?null:true">Començar partida</button>
       }
     </div>
-    @if(global.sala.admin_id==global.user.id){
-      <button class="btn btn-warning mt-3" (click)="iniciarPartida()" [disabled]="global.sala.connected>=2?null:true">Començar partida</button>
-    }
   </div>
 </div>

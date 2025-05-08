@@ -4,27 +4,39 @@
   display: flex;
   position: relative;
 }
+:host h5 {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 :host #cntrybx {
   text-align: center;
 }
+:host #disconnect {
+  left: 98%;
+}
 :host #map {
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: calc(230px + 30px);
 }
 :host #map .boxinside {
   padding: 0;
 }
 :host #jugador {
-  width: 220px;
+  width: 230px;
   flex-shrink: 0;
+  z-index: 1;
+}
+:host #jugador #jugInfo {
+  max-width: 60%;
+  white-space: nowrap;
 }
 :host #jugador .boxinside {
   padding: 10px;
   width: 100%;
+  overflow: hidden;
 }
 :host #jugador .crown {
-  margin-left: -4%;
-  margin-top: 2%;
+  margin-left: -12%;
+  margin-top: 15%;
 }
 :host #jugador .card {
   width: 25px;
@@ -38,20 +50,18 @@
   height: 30px;
   width: 35px;
 }
-:host .jugador1 {
-  margin-left: 500%;
+:host #missatges {
+  width: 19.5%;
+  margin-left: 1%;
+  color: white;
 }
-:host .jugador2 {
-  margin-top: 86%;
-}
-:host .jugador3 {
-  margin-top: 86%;
-  margin-left: 500%;
-}
-:host .jugador4 {
-  margin-top: 172%;
-}
-:host .jugador5 {
-  margin-top: 172%;
-  margin-left: 500%;
+:host #missatges #msg {
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.61);
+  border-radius: 15px;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
+  height: 90%;
+  display: flex;
+  flex-direction: column-reverse;
 }

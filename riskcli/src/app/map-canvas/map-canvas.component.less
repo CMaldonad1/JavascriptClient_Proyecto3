@@ -1,18 +1,23 @@
-@box_width: 220px;
-@margin-top:86%;
+@box_width: 230px;
 @margin-left:500%;
 :host{
+  h5{
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
   width: 100%;
   height:100%;
   display:flex;
   position:relative;
   #cntrybx{
     text-align: center;
-
+  }
+  #disconnect{
+    left: 98%;
   }
   #map{
-    margin-left:auto;
-    margin-right:auto;
+    margin-left: calc(@box_width + 30px);
     .boxinside{
       padding:0;
     }
@@ -20,13 +25,19 @@
   #jugador{
     width:@box_width;
     flex-shrink: 0;
+    z-index:1;
+    #jugInfo{
+      max-width:60%;
+      white-space: nowrap;
+    }
     .boxinside{
       padding:10px;
       width:100%;
+      overflow: hidden;
     }
     .crown{
-      margin-left: -4%;
-      margin-top: 2%;
+      margin-left: -12%;
+      margin-top: 15%;
     }
     .card{
       width:25px;
@@ -41,21 +52,20 @@
       width: 35px;
     }
   }
-  .jugador1{
-    margin-left: @margin-left;
-  }
-  .jugador2{
-    margin-top: @margin-top;
-  }
-  .jugador3{
-    margin-top: @margin-top;
-    margin-left: @margin-left;
-  }
-  .jugador4{
-    margin-top: @margin-top*2;
-  }
-  .jugador5{
-    margin-top: @margin-top*2;
-    margin-left: @margin-left;
+  #missatges{
+    width:19.5%;
+    margin-left: 1%;
+    color:white;
+    #msg{
+      padding:12px;
+      background-color: rgba(0, 0, 0, 0.61);
+      border-radius: 15px;
+      overflow-wrap: break-word;
+      overflow-y: scroll;
+      height:90%;
+      display:flex;
+      flex-direction: column-reverse;
+    }
+
   }
 }

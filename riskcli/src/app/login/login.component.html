@@ -1,9 +1,9 @@
 <div id="information" class="d-flex justify-content-center align-items-center flex-column">
-  @if(global.login && !global.partida){
+  <!-- @if(global.login && !global.partida){
     <app-salas (logoff)="desconectar()"/>
   }@else if (global.partida) {
     <app-map-canvas/>
-  }@else {
+  }@else { -->
     @if(error!=""){
       <div id="loginborder" class="boxborder mb-3">
         <div id="login" class="boxinside d-flex p-0 justify-content-center">
@@ -31,7 +31,7 @@
         </form>
       </div>
     </div>
-  }
+  <!-- } -->
     <!-- <div class="position-absolute">
       <div *ngFor="let message of messages" >
         {{ message.data }}
