@@ -1,0 +1,61 @@
+@box_width: 220px;
+@margin-top:86%;
+@margin-left:500%;
+:host{
+  width: 100%;
+  height:100%;
+  display:flex;
+  position:relative;
+  #cntrybx{
+    text-align: center;
+
+  }
+  #map{
+    margin-left:auto;
+    margin-right:auto;
+    .boxinside{
+      padding:0;
+    }
+  }
+  #jugador{
+    width:@box_width;
+    flex-shrink: 0;
+    .boxinside{
+      padding:10px;
+      width:100%;
+    }
+    .crown{
+      margin-left: -4%;
+      margin-top: 2%;
+    }
+    .card{
+      width:25px;
+    }
+    .soldier{
+      width:30px;
+      height:30px;
+    }
+    .qty{
+      font-size: 20px;
+      height:30px;
+      width: 35px;
+    }
+  }
+  .jugador1{
+    margin-left: @margin-left;
+  }
+  .jugador2{
+    margin-top: @margin-top;
+  }
+  .jugador3{
+    margin-top: @margin-top;
+    margin-left: @margin-left;
+  }
+  .jugador4{
+    margin-top: @margin-top*2;
+  }
+  .jugador5{
+    margin-top: @margin-top*2;
+    margin-left: @margin-left;
+  }
+}

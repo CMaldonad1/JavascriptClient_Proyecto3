@@ -10,6 +10,7 @@ export class GlobalService {
   token: string= '';
   user: User= new User();
   sala: Sala = new Sala();
-
+  partida: boolean=false;
+  jugadors: User[] = []
   constructor() { }
 }

@@ -13,7 +13,7 @@
             <div class="d-flex flex-row col-12">
               <h5 class="col-5">Jugadors:</h5>
               <input type="range" min="2" max="6" value="2" class="slider me-3 col-6" id="myRange" (change)="updateJugs($event)" formControlName="max_players">
-              <h5 #jugs class="col-1">2</h5>
+              <h5 #jugs class="col-1">{{sliderValue}}</h5>
             </div>
             <div class="d-flex flex-row flex-wrap col-12 mt-2">
               <h5 class="col-5">Nom Sala:</h5>

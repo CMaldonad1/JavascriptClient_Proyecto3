@@ -9,9 +9,14 @@ body {
 }
 body {
   font-family: 'FinalFantasy';
-  background-size: 100% 100%;
+  background-size: cover;
+  background-position: 0% 50%;
   background-repeat: no-repeat;
   background-image: url(../public/img/background.jpg);
+}
+body input {
+  font-family: sans-serif;
+  text-align: center;
 }
 body #minirisk,
 body #disconnect,
@@ -29,6 +34,19 @@ body .error {
   font-weight: bold;
   text-shadow: 3px 1px 3px #c6e41b, 0 0 1em #d2d3ca, 0 0 0.2em #ffffff;
 }
+body .icon_jugador {
+  width: 50px;
+  height: 50px;
+  border: 2px solid black;
+  border-radius: 50%;
+}
+body .crown {
+  position: absolute;
+  top: -30px;
+  left: 10px;
+  width: 45px;
+  height: 45px;
+}
 body #information {
   height: 100%;
   width: 100%;
@@ -42,11 +60,14 @@ body #information .boxborder {
   font-weight: bold;
   padding: 5px;
   border: 3px solid black;
+  height: fit-content;
 }
 body #information .boxinside {
   position: relative;
   padding: 30px;
   background-color: #206ee2;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 body #information .boxinside,
 body #information .boxborder,

@@ -1,15 +1,23 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, Input, Output, EventEmitter, input } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
 import continentData from '../../../public/map.json';
 import { LoginComponent } from '../login/login.component';
-
+import { WebsocketService } from '../services/websocket.service';
+import { Subscription } from 'rxjs';
+import { GlobalService } from '../services/global.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-map-canvas',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './map-canvas.component.html',
   styleUrl: './map-canvas.component.less'
 })
 export class MapCanvasComponent {
+  constructor(
+    public wsService: WebsocketService,
+    public global: GlobalService
+  ) {}
+  private wsSubscription!: Subscription;
 
   @ViewChild('visibleCanvas') visibleCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('hitCanvas') hitCanvas!: ElementRef<HTMLCanvasElement>;
@@ -28,6 +36,14 @@ export class MapCanvasComponent {
   private hitImg = new Image();
   private playerColors=[[255,0,0,250],[0,255,0,250],[0,0,255,250],[255,255,0,250]]
   continentInfo: any = continentData;
+
+  ngOnInit() {
+    this.wsSubscription = this.wsService.canalSala().subscribe(
+      (message: any) => {
+
+      }
+    );
+  }
 
   ngAfterViewInit(): void {
     this.ctxVisible = this.visibleCanvas.nativeElement.getContext('2d')!;
@@ -70,16 +86,15 @@ export class MapCanvasComponent {
     // }else if (hoverColor!== info.colorId) {
     if (!info.hitzone) {
       var country;
-
       // this.redrawCanvasWithHover(info.colorId);
       // portem informació del country de tornada per
       country=this.findcountry(info.colorId);
 
       if(country){
-        this.countrybox.nativeElement.style.left=info.x-30+'px';
-        this.countrybox.nativeElement.style.top=info.y-30+'px';
-        this.countrybox.nativeElement.textContent=country.country;
+        this.countrybox.nativeElement.textContent=country.name;
       }
+    }else{
+      this.countrybox.nativeElement.textContent="";
     }
   }
 

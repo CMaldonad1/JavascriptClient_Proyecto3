@@ -17,13 +17,14 @@ export class WebsocketService {
   private canalLogin$ = new Subject<any>();
   private canalLobby$ = new Subject<any>();
   private canalSala$ = new Subject<any>();
+  private canalPartida$ = new Subject<any>();
 
   constructor() {
     this.socket$.subscribe(msg => {
       console.info(msg);
       if ( msg.response['token'] || msg.status== 419 ) this.canalLogin$.next(msg);
-      if ( msg.response['salas'] ) this.canalLobby$.next(msg);
-      if ( msg.response['sala'] || msg.response['sala_id'] ) this.canalSala$.next(msg);
+      if ( msg.response['salas'] || msg.response['sala_id']) this.canalLobby$.next(msg);
+      if ( msg.response['sala']  || msg.response['players'] || msg.response['start'] || msg.response['left']) this.canalSala$.next(msg);
     });
   }
 
@@ -41,6 +42,10 @@ export class WebsocketService {
 
   public canalSala(): Observable<any> {
     return this.canalSala$.asObservable();
+  }
+
+  public canalPartida(): Observable<any> {
+    return this.canalPartida$.asObservable();
   }
 
   public getMsg(): Observable<any> {

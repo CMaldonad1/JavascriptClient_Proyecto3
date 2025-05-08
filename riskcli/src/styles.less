@@ -8,9 +8,14 @@ html, body{
 }
 body{
   font-family: 'FinalFantasy';
-  background-size: 100% 100%;
+  background-size: cover;
+  background-position: 0% 50%;
   background-repeat: no-repeat;
   background-image: url(../public/img/background.jpg);
+  input{
+    font-family: sans-serif;
+    text-align: center;
+  }
   #minirisk, #disconnect, #tornarLobby{
     position:absolute;
   }
@@ -27,6 +32,19 @@ body{
     0 0 1em rgb(210, 211, 202),
     0 0 0.2em rgb(255, 255, 255);
   }
+  .icon_jugador{
+    width:50px;
+    height:50px;
+    border: 2px solid black;
+    border-radius: 50%;
+  }
+  .crown{
+    position:absolute;
+    top: -30px;
+    left: 10px;
+    width:45px;
+    height:45px;
+  }
   #information{
     height:100%;
     width:100%;
@@ -39,11 +57,14 @@ body{
       font-weight: bold;
       padding:5px;
       border: 3px solid black;
+      height: fit-content;
     }
     .boxinside{
       position:relative;
       padding:30px;
       background-color: rgb(32, 110, 226);
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
     .boxinside, .boxborder, input{
       border-radius: 20px;

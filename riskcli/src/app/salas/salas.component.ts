@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter,ElementRef, Output,ViewChild } from '@angular/core';
+import { Component, Input, EventEmitter,ElementRef, Output,ViewChild, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebsocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
@@ -23,12 +23,12 @@ export class SalasComponent {
   private wsSubscription!: Subscription;
   messages: any[] = [];
   salas: Sala[] = [];
+  sliderValue: number=2;
 
   @Output() logoff= new EventEmitter<boolean>();
   @Input() username!: string;
   @ViewChild('jugs') numjugs!: ElementRef<HTMLParagraphElement>;
   @ViewChild('modal') modal!: ElementRef<HTMLParagraphElement>;
-
   //creació del formulario de creación de Sala
   formSala: FormGroup = new FormGroup({
     name: new FormControl("",[Validators.required]),
@@ -38,10 +38,14 @@ export class SalasComponent {
   ngOnInit() {
     this.wsSubscription = this.wsService.canalLobby().subscribe(
       (message: any) => {
-        message.response.salas.forEach((sala:any)=> {
-          this.salas.push(new Sala(sala.id,sala.date,sala.nom,sala.max_players,-99,sala.connected))
-        });
-        this.messages.push(message);
+        if(message.response.sala_id){
+          this.entrarSala(message.response.sala_id)
+        }else if(message.response.salas){
+          message.response.salas.forEach((sala:any)=> {
+            this.salas.push(new Sala(sala.id,sala.date,sala.nom,sala.max_players,-99,sala.connected))
+          });
+          this.messages.push(message);
+        }
       }
     );
     this.requestRooms();
@@ -88,6 +92,7 @@ export class SalasComponent {
   }
   updateJugs(event:any){
     var valor = event.target.value;
+    this.sliderValue=valor;
     this.numjugs.nativeElement.textContent=valor;
   }
   entrarSala(id:number){

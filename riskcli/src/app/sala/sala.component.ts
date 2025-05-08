@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter,ElementRef,ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebsocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
@@ -17,27 +17,27 @@ export class SalaComponent {
   constructor(
     public wsService: WebsocketService,
     public global: GlobalService
-   ) {}
+  ) {}
   private wsSubscription!: Subscription;
-  jugadors: User[] = [];
+
   @Output() tornar = new EventEmitter<string>();
-  colorchoices: any[]=["#ff0000","#00ff00","#0000ff","#ffff00","#fc7b03","#f403fc"];
-  colorSelected: string[]=[];
+  colorchoices: any[]=["#fa0000d9","#00b200d9","#0000ffd9","#fa6400d9","#c800ffd9","#645000d9"];
 
   ngOnInit() {
     this.wsSubscription = this.wsService.canalSala().subscribe(
       (message: any) => {
-        if(message.response.sala_id){
-          this.global.sala.id=message.response.sala_id;
-          this.afegirJugador(this.global.user);
-        }else if(message.response.players ){ //si conectem a sala
+        if(message.response.players && message.response.sala){
           this.carregarSala(message.response.sala);
-          this.carregarJugadors(message.response.players);
-          this.afegirJugador(this.global.user);
-        }else if(message.response.conectat){
-          this.carregarJugadors(message.response.conectat)
+          this.infoJugadors(message.response.players);
+        }else if(message.response.players){
+          this.infoJugadors(message.response.players);
         }else if(message.response.desconectat){
           this.desconectaJugador(message.response.desconectat.idJug)
+        }else if(message.response.start=='1'){
+          this.global.partida=true;
+          console.info(this.global.partida);
+        }else if(message.response.left=='1'){
+          this.tornar.emit();
         }
       }
     );
@@ -46,39 +46,59 @@ export class SalaComponent {
     this.wsService.sendMsg(message);
   }
   private carregarSala(sala:any){
-    this.global.sala=new Sala(sala.id,
+    this.global.sala=new Sala(
+      sala.id,
       sala.date,
       sala.nom,
       sala.max_players,
-      sala.admin_id,
-      sala.connected)
+      sala.admin_id)
+  }
+  private infoJugadors(players: any){
+    this.carregarJugadors(players);
+    this.global.sala.connected=players.length
   }
   private carregarJugadors(players:any){
+    this.global.jugadors.length=0
     for(var i=0; i< players.length;i++){
-      this.afegirJugador(players[i]);
+      this.afegirJugador(players[i], i);
     }
   }
-  private afegirJugador(jugador:any){
-    var auxColor=this.colorchoices.shift();
-    this.jugadors.push(new User(jugador.id, jugador.nom, auxColor))
-    this.colorSelected.push(auxColor);
+  private afegirJugador(jugador:any, i:number){
+    this.global.jugadors.push(new User(jugador.id, jugador.nom, this.colorchoices[i]))
   }
+  iniciarPartida(){
+    this.sendMessage(
+      {
+        action:'iniciar_partida',
+        token: this.global.token
+      }
+    );
+  }
+  testafegir(){
+    this.sendMessage(
+      {
+        action:'testJugador',
+        token: this.global.token
+      }
+    );
+  }
+
   public desconectaJugador(id: number){
-    this.jugadors=this.jugadors.filter((e)=>{
+    this.global.jugadors=this.global.jugadors.filter((e)=>{
       return e.id!=id;
     })
   }
   tornarLobby(){
-    this.jugadors=[];
-    this.colorchoices.push(this.colorSelected);
-    this.colorSelected=[];
+    this.global.jugadors=[];
     this.sendMessage(
       {
-        action:'desconecta',
-        token: this.global.token
+        action:'leave_sala',
+        token: this.global.token,
+        info:{
+          sala: this.global.sala.id
+        }
       }
     );
-    this.tornar.emit();
   }
 
   ngOnDestroy() {

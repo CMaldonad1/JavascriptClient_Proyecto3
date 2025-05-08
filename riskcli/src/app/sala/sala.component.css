@@ -1,22 +1,10 @@
 #sala {
-  min-width: 600px;
+  width: 600px;
   position: relative;
 }
 #sala #salainterior {
+  padding: 10px;
   position: relative;
-}
-#sala #salainterior .icon_jugador {
-  width: 50px;
-  height: 50px;
-  border: 2px solid black;
-  border-radius: 50%;
-}
-#sala #salainterior .crown {
-  position: absolute;
-  top: -30px;
-  left: 10px;
-  width: 45px;
-  height: 45px;
 }
 #sala #salainterior #tornarLobby {
   top: 5%;
