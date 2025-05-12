@@ -50,7 +50,7 @@ export class SalasComponent {
     );
     var sala= localStorage.getItem('sala')
     if(sala){
-      this.entrarSala(Number(sala));
+      this.redirectSala();
     }else{
       this.requestRooms();
     }
