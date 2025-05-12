@@ -21,10 +21,18 @@
 :host #map .boxinside {
   padding: 0;
 }
+:host #activeBorder {
+  rotate: 90deg;
+  z-index: 1;
+  transform-origin: 95% 35%;
+  left: 50px;
+  position: absolute;
+  height: 250px;
+  width: 106px;
+}
 :host #jugador {
   width: 230px;
   flex-shrink: 0;
-  z-index: 1;
 }
 :host #jugador #jugInfo {
   max-width: 60%;

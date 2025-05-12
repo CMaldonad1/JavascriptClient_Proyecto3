@@ -68,6 +68,7 @@ export class MapCanvasComponent {
         }
       }
     );
+    this.global.activePlayer=this.global.user;
   }
 
   ngAfterViewInit(): void {

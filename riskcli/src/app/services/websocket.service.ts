@@ -7,9 +7,9 @@ import { Observable, Subject } from 'rxjs';
 })
 export class WebsocketService {
   //My server
-  private readonly SERVER ='ws://localhost:8765';
+  // private readonly SERVER ='ws://localhost:8765';
   //JA Server
-  // private readonly SERVER ='ws://10.200.1.4:8080';
+  private readonly SERVER ='ws://10.200.1.4:8080';
 
   private socket$: WebSocketSubject<any> = webSocket(this.SERVER);
   private readonly reconInter = 5000; //5seg per reconectar
@@ -95,10 +95,13 @@ export class WebsocketService {
       }
     });
   }
-  public startGame(token:string){
+  public startGame(token:string,id:number){
     this.sendMsg({
-        action:'iniciar_partida',
-        token: token
+        action:'start_match',
+        token: token,
+        info:{
+          sala:id
+        }
       });
   }
   public surrenderGame(token:string, id:Number){

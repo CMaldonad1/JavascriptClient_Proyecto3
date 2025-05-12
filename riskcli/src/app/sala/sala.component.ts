@@ -74,7 +74,7 @@ export class SalaComponent {
   }
 
   iniciarPartida(){
-    this.wsService.startGame(this.global.user.token);
+    this.wsService.startGame(this.global.user.token, this.global.sala.id);
   }
 
   public desconectaJugador(id: number){

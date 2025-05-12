@@ -24,10 +24,19 @@
       padding:0;
     }
   }
+  #activeBorder{
+    rotate: 90deg;
+    z-index:1;
+    transform-origin: 95% 35%;
+    left:50px;
+    position:absolute;
+    height: @box_width+20;
+    width:106px;
+  }
   #jugador{
     width:@box_width;
     flex-shrink: 0;
-    z-index:1;
+
     #jugInfo{
       max-width:60%;
       white-space: nowrap;
