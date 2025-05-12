@@ -27,6 +27,7 @@ export class SalaComponent {
   ngOnInit() {
     this.wsSubscription = this.wsService.canalSala().subscribe(
       (message: any) => {
+        console.info(message);
         if(message.response.players && message.response.sala){
           this.carregarSala(message.response.sala);
           this.infoJugadors(message.response.players);
@@ -43,10 +44,7 @@ export class SalaComponent {
         }
       }
     );
-    var sala= localStorage.getItem('sala')
-    if(sala && this.global.sala.id==-9){
-      this.wsService.entrarSala(this.global.user.token, Number(sala));
-    }
+
   }
   sendMessage(message:any) {
     this.wsService.sendMsg(message);
