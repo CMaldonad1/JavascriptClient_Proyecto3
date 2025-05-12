@@ -6,11 +6,15 @@ import { User } from '../../class/user/user';
   providedIn: 'root'
 })
 export class GlobalService {
-  login: boolean=false;
-  token: string= '';
   user: User= new User();
   sala: Sala = new Sala();
   partida: boolean=false;
-  jugadors: User[] = []
-  constructor() { }
+  jugadors: User[] = [];
+  activePlayer: User = new User();
+
+  constructor(){
+    const userData = localStorage.getItem('user');
+    this.user = userData ? User.fromJSON(JSON.parse(userData)) : new User();
+  }
+
 }

@@ -7,6 +7,7 @@ import { MapCanvasComponent } from '../map-canvas/map-canvas.component';
 import { SalasComponent } from "../salas/salas.component";
 import { GlobalService } from '../services/global.service';
 import { Router } from '@angular/router';
+import { User } from '../../class/user/user';
 
 @Component({
   selector: 'app-login',
@@ -36,23 +37,7 @@ export class LoginComponent implements OnInit, OnDestroy{
   userlogin(){
     var formValue=this.logForm.value;
     this.global.user.nom=formValue.user
-    var message = { action: 'login',
-                    login: {
-                      user:formValue.user,
-                      password  :formValue.pswd
-                    }
-                  };
-    this.sendMessage(message);
-  }
-
-  getCountry(ctry: any){
-    // this.ctry=ctry.country+" - "+ctry.name;
-    var message = { action: 'invade',
-      data: {
-        cntry:ctry.country
-      }
-    };
-    this.sendMessage(message);
+    this.wsService.login(formValue.user, formValue.pswd)
   }
 
   ngOnInit() {
@@ -60,28 +45,28 @@ export class LoginComponent implements OnInit, OnDestroy{
       (message: any) => {
         if(message.status==200 && message.response['token']){
           this.error="";
-          this.global.login=true;
-          this.global.token=message.response['token'];
+          this.global.user.token=message.response['token'];
           this.global.user.id=message.response['id'];
-          this.router.navigate(['/lobby'])
+          localStorage.setItem('user', JSON.stringify(this.global.user.toJSON()));
+          this.goToLobby()
         }else{
           this.error="Usuari i/o contrasenya incorrecta";
         }
       }
     );
+    var userSession = localStorage.getItem('user')
+    if(userSession){
+      const user = JSON.parse(userSession);
+      this.global.user = User.fromJSON(user);
+      this.goToLobby()
+    }
   }
-  test(){
+  private goToLobby(){
     this.router.navigate(['/lobby'])
-  }
-  sendMessage(message:any) {
-    this.wsService.sendMsg(message);
   }
 
   ngOnDestroy() {
     this.wsSubscription.unsubscribe();
   }
 
-  desconectar(){
-    this.global.login=false;
-  }
 }

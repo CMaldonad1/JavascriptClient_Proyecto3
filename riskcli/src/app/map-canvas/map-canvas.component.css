@@ -15,7 +15,8 @@
   left: 98%;
 }
 :host #map {
-  margin-left: calc(230px + 30px);
+  margin-top: 80px;
+  margin-left: calc(230px + 25px);
 }
 :host #map .boxinside {
   padding: 0;
@@ -51,11 +52,11 @@
   width: 35px;
 }
 :host #missatges {
-  width: 19.5%;
-  margin-left: 1%;
-  color: white;
+  width: 260px;
+  margin-left: 20px;
 }
 :host #missatges #msg {
+  color: white;
   padding: 12px;
   background-color: rgba(0, 0, 0, 0.61);
   border-radius: 15px;
@@ -63,5 +64,20 @@
   overflow-y: scroll;
   height: 90%;
   display: flex;
+  width: 260px;
   flex-direction: column-reverse;
+}
+:host #gamestatus {
+  display: flex;
+  flex: row;
+  position: absolute;
+  height: 40px;
+  margin-left: calc(230px + 85px);
+}
+:host #gamestatus #icon {
+  height: 30px;
+  width: 30px;
+}
+:host #gamestatus .boxinside {
+  padding: 5px;
 }

@@ -9,8 +9,8 @@ body {
 }
 body {
   font-family: 'FinalFantasy';
-  background-size: cover;
-  background-position: 0% 50%;
+  background-size: auto;
+  background-position: 50% 50%;
   background-repeat: no-repeat;
   background-image: url(../public/img/background.jpg);
 }

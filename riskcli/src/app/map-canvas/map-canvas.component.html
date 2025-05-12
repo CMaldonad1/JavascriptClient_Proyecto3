@@ -1,4 +1,41 @@
 <div id="information" class="d-flex flex-row">
+  <!-- Modal "Abandonar partida?" -->
+  <div #modal class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog boxborder position-relative">
+      <div class="modal-content boxinside">
+        <div class="text-center">
+          <button id="disconnect" type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">⨉</button>
+        </div>
+        <div class="modal-body">
+          <div class="slidecontainer d-flex flex-row flex-wrap">
+            <div class="d-flex flex-row col-12 text-center">
+              <h5 style="color:white;">Estas intentant deixar la partida? <br>Si ho fas contará com una derrota al teu historial</h5>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center col-12">
+          <button type="button" class="btn btn-danger" (click)="surrender()">Sortir de la partida</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- counter e info de partida -->
+   <div id="gamestatus" class="d-flex flex-row justify-content-between align-items-center mt-4 col-6">
+      <div id="timer" class="boxborder col-3">
+        <div class="boxinside align-items-center ps-3 d-flex">
+          <h4 class="p-0 m-0">Temps:</h4>
+          <h4 #timer class="ms-3 p-0 m-0">{{min}}:{{sec}}</h4>
+        </div>
+      </div>
+      <div id="phases" class="boxborder col-4">
+        <div class="boxinside d-flex flex-row justify-content-between ps-3 pe-3">
+          <img id="icon" src="/img/deploy.png" alt="deployment">
+          <img id="icon" src="/img/canon.png" alt="deployment">
+          <img id="icon" src="/img/reinforcement.png" alt="deployment">
+        </div>
+      </div>
+      <button id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
+   </div>
   <!-- Informació jugadors -->
   <div class="ms-3 mt-2 d-flex flex-row flex-wrap col-1 position-absolute" >
     <div *ngFor="let item of [].constructor(global.sala.connected); let i = index">
@@ -12,7 +49,6 @@
           </div>
           <div id="jugInfo" class="d-flex flex-row flex-wrap justify-content-around ms-3">
             <h5 class="ms-1 col-12 mb-0">{{global.jugadors[i].nom}} </h5>
-
             <div class="d-flex flex-row col-6 align-items-center">
               <img src="/img/cards.png" class="card"/>
               <div class="qty text-center">{{global.jugadors[i]._cartas.length}}</div>
@@ -27,12 +63,12 @@
     </div>
   </div>
   <!-- Mapas -->
-  <div id="map" class="boxborder boxshadow mt-5">
+  <div id="map" class="boxborder boxshadow">
     <div class="d-flex position-relative boxinside">
-      <button id="disconnect" type="button" class="btn btn-danger" (click)="abandonar()">⨉</button>
+      <button id="disconnect" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">⨉</button>
       <h4 id="cntrybx" #countrybox class="position-absolute ms-3 mt-1"></h4>
       <!-- Mapa visible -->
-      <canvas #visibleCanvas width="800" height="490" (mousemove)="onMouseMove($event)" (click)="selectCountry($event)"></canvas>
+      <canvas #visibleCanvas width="800" height="490" (mousemove)="onMouseMove($event)" (click)="selectCountry($event)" [style.pointer-events]="global.user.id==global.activePlayer.id? 'auto' : 'none'"></canvas>
       <!-- Canvas oculto con mapa de regiones -->
       <canvas #hitCanvas width="800" height="490" style="display: none;"></canvas>
     </div>

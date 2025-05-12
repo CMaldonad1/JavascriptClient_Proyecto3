@@ -25,7 +25,7 @@ export class WebsocketService {
       if ( msg.response['token'] || msg.status== 419 ) this.canalLogin$.next(msg);
       if ( msg.response['salas'] || msg.response['sala_id']) this.canalLobby$.next(msg);
       if ( msg.response['sala']  || msg.response['players'] || msg.response['start'] || msg.response['left']) this.canalSala$.next(msg);
-      if ( msg.response['deployment'] || msg.response['countries'])  this.canalPartida$.next(msg);
+      if ( msg.response['deployment'] || msg.response['countries'] || msg.response['surrender'])  this.canalPartida$.next(msg);
     });
   }
 
@@ -52,7 +52,64 @@ export class WebsocketService {
   public getMsg(): Observable<any> {
     return this.socket$.asObservable();
   }
-
+  public login(user:string, pswd:string){
+    this.sendMsg({
+      action: 'login',
+      login: {
+        user:user,
+        password:pswd
+      }
+    })
+  }
+  public requestRooms(token:string){
+    this.sendMsg({
+        action: 'lobby',
+        token: token
+      })
+  }
+  public tornarLobby(token:string, salaid: number){
+    this.sendMsg({
+        action:'leave_sala',
+        token: token,
+        info:{
+          sala: salaid
+        }
+      });
+  }
+  public entrarSala(token:string, id: Number){
+    this.sendMsg({
+      action:'join',
+      token: token,
+      info:{
+        sala:id
+      }
+    });
+  }
+  public crearSala(token:string, nom: string, max_players:any){
+    this.sendMsg({
+      action:'create',
+      token: token,
+      info:{
+        nom: nom,
+        max_players: max_players
+      }
+    });
+  }
+  public startGame(token:string){
+    this.sendMsg({
+        action:'iniciar_partida',
+        token: token
+      });
+  }
+  public surrenderGame(token:string, id:Number){
+    this.sendMsg({
+      action:'surrender',
+      token: token,
+      info:{
+        sala:id
+      }
+    });
+  }
   public close() {
     this.socket$.complete();
     console.info("Desconectado!")

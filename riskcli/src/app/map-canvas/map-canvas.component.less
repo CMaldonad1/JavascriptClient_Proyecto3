@@ -1,9 +1,10 @@
 @box_width: 230px;
-@margin-left:500%;
+@message: 260px;
 :host{
   h5{
     text-overflow: ellipsis;
     overflow: hidden;
+
   }
 
   width: 100%;
@@ -17,7 +18,8 @@
     left: 98%;
   }
   #map{
-    margin-left: calc(@box_width + 30px);
+    margin-top:80px;
+    margin-left: calc(@box_width + 25px);
     .boxinside{
       padding:0;
     }
@@ -53,10 +55,10 @@
     }
   }
   #missatges{
-    width:19.5%;
-    margin-left: 1%;
-    color:white;
+    width:@message;
+    margin-left: 20px;
     #msg{
+      color:white;
       padding:12px;
       background-color: rgba(0, 0, 0, 0.61);
       border-radius: 15px;
@@ -64,8 +66,23 @@
       overflow-y: scroll;
       height:90%;
       display:flex;
+      width:@message;
       flex-direction: column-reverse;
     }
 
+  }
+  #gamestatus{
+    display:flex;
+    flex:row;
+    position: absolute;
+    height:40px;
+    margin-left: calc(@box_width + 85px);
+    #icon{
+      height: 30px;
+      width: 30px;
+    }
+    .boxinside{
+      padding:5px;
+    }
   }
 }

@@ -48,19 +48,17 @@ export class SalasComponent {
         }
       }
     );
-    this.requestRooms();
+    var sala= localStorage.getItem('sala')
+    if(sala){
+      this.entrarSala(Number(sala));
+    }else{
+      this.requestRooms();
+    }
   }
-  sendMessage(message:any) {
-    this.wsService.sendMsg(message);
-  }
+
   requestRooms(){
     this.salas=[];
-    this.sendMessage(
-      {
-        action: 'lobby',
-        token: this.global.token
-      }
-    )
+    this.wsService.requestRooms(this.global.user.token);
   }
   private hideModal(){
     document.body.classList.remove('modal-open');
@@ -74,21 +72,8 @@ export class SalasComponent {
     var nom=formValue.name;
     var max_players = formValue.max_players;
 
-    this.global.sala.nom=nom;
-    this.global.sala.connected=1;
-    this.global.sala.max_players=max_players;
-    this.global.sala.admin_id=this.global.user.id;
-    this.sendMessage(
-      {
-        action:'create',
-        token: this.global.token,
-        info:{
-          nom: nom,
-          max_players: max_players
-        }
-      }
-    );
-    this.global.sala.id=0;
+    this.wsService.crearSala(this.global.user.token, nom, max_players);
+
   }
   updateJugs(event:any){
     var valor = event.target.value;
@@ -96,16 +81,8 @@ export class SalasComponent {
     this.numjugs.nativeElement.textContent=valor;
   }
   entrarSala(id:number){
-    this.global.sala.id=id;
-    this.sendMessage(
-      {
-        action:'join',
-        token: this.global.token,
-        info:{
-          sala:this.global.sala.id
-        }
-      }
-    );
+    localStorage.setItem('sala', id.toString());
+    this.wsService.entrarSala(this.global.user.token, id);
     this.redirectSala();
   }
   private redirectSala(){
@@ -117,6 +94,7 @@ export class SalasComponent {
     this.requestRooms();
   }
   desconectar(){
+    localStorage.removeItem('user');
     this.global.user=new User();
     this.router.navigate([''])
   }

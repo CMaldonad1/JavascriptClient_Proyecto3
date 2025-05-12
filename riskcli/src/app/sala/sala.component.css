@@ -10,3 +10,9 @@
   top: 5%;
   left: calc(95% - 60px);
 }
+#sala #salainterior #jugadorbox {
+  height: 90px !important;
+}
+#sala #salainterior .boxinside {
+  height: 100%;
+}

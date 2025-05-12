@@ -38,10 +38,15 @@ export class SalaComponent {
           this.global.partida=true;
           this.router.navigate(['/game'])
         }else if(message.response.left){
+          localStorage.removeItem('sala');
           this.router.navigate(['/lobby'])
         }
       }
     );
+    var sala= localStorage.getItem('sala')
+    if(sala && this.global.sala.id==-9){
+      this.wsService.entrarSala(this.global.user.token, Number(sala));
+    }
   }
   sendMessage(message:any) {
     this.wsService.sendMsg(message);
@@ -65,15 +70,11 @@ export class SalaComponent {
     }
   }
   private afegirJugador(jugador:any, i:number){
-    this.global.jugadors.push(new User(jugador.id, jugador.nom, this.colorchoices[i]))
+    this.global.jugadors.push(new User(jugador.nom, jugador.id, "",this.colorchoices[i]))
   }
+
   iniciarPartida(){
-    this.sendMessage(
-      {
-        action:'iniciar_partida',
-        token: this.global.token
-      }
-    );
+    this.wsService.startGame(this.global.user.token);
   }
 
   public desconectaJugador(id: number){
@@ -83,15 +84,7 @@ export class SalaComponent {
   }
   tornarLobby(){
     this.global.jugadors=[];
-    this.sendMessage(
-      {
-        action:'leave_sala',
-        token: this.global.token,
-        info:{
-          sala: this.global.sala.id
-        }
-      }
-    );
+    this.wsService.tornarLobby(this.global.user.token, this.global.sala.id)
   }
 
   ngOnDestroy() {
