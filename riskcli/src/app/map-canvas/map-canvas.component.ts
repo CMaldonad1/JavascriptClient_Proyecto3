@@ -28,7 +28,6 @@ export class MapCanvasComponent {
   @ViewChild('countrybox') countrybox!: ElementRef<HTMLCanvasElement>;
   @Output() selCountry= new EventEmitter<string>();
   @Input() msg:any=[];
-  activePlayer!: number;
   img = new Image();
   totalTime=180;
   min: number = 0;
@@ -68,9 +67,8 @@ export class MapCanvasComponent {
         }
       }
     );
-    this.global.activePlayer=this.global.user;
+    this.global.activePlayer=this.global.jugadors[0];
   }
-
   ngAfterViewInit(): void {
     this.ctxVisible = this.visibleCanvas.nativeElement.getContext('2d')!;
     this.ctxHit = this.hitCanvas.nativeElement.getContext('2d')!;
@@ -107,7 +105,7 @@ export class MapCanvasComponent {
   //   this.seconds = this.totalSeconds % 60;
   // }
 
-  private colocarTropa  (setup:any){
+  private colocarTropa(setup:any){
     setup.array.forEach((e:any) => {
 
     });
@@ -162,7 +160,6 @@ export class MapCanvasComponent {
       'hitzone':hitzone
     }
   }
-
   //busquem la informació del country per color
   private findCountryByColor(colorId: string){
     var i=0;
@@ -174,7 +171,6 @@ export class MapCanvasComponent {
 
     return country;
   }
-
   //insertem la informació de les tropes al country
   private insertarNumeroTropas(info:any){
     const ctx = this.ctxVisible;
@@ -187,7 +183,6 @@ export class MapCanvasComponent {
     ctx.textBaseline = 'middle';
     ctx.fillText("20", info.x, info.y);
   }
-
   onMouseMove(event: MouseEvent): void {
     var info=this.eventInfo(event);
     var hoverColor=this.hoveredColorId;
@@ -203,10 +198,12 @@ export class MapCanvasComponent {
       this.countrybox.nativeElement.textContent="";
     }
   }
-
   selectCountry(event: MouseEvent): void {
     var info=this.eventInfo(event);
-
+    this.wsService.placeTroop(this.global.user.token,info.country.country )
+    this.pintarPais(info, this.global.activePlayer.color)
+  }
+  private pintarPais(info:any, playerColor: any){
     for (let i = 0; i < info.data.length; i += 4) {
       const r = info.data[i];
       const g = info.data[i + 1];
@@ -216,23 +213,17 @@ export class MapCanvasComponent {
       //Revisar si realmente es una hitzone
       if (info.hitzone){
         if (currentColor === info.colorId) {
-          info.visibleImg.data[i] = 0;
-          info.visibleImg.data[i + 1] = 255;
-          info.visibleImg.data[i + 2] = 0;
+          var color=this.hexToRgba(playerColor)
+          info.visibleImg.data[i] = color[0];
+          info.visibleImg.data[i + 1] = color[1];
+          info.visibleImg.data[i + 2] = color[2];
           info.visibleImg.data[i + 3] = 255;
           this.ctxVisible.putImageData(info.visibleImg, 0, 0);
           this.insertarNumeroTropas(info);
         }
       }
-
     }
   }
-
-
-  private pintarPais(area:any, playerColor: any){
-
-  }
-
   // private redrawCanvasWithHover(colorId: any): void {
   //   // 1. Limpiamos el canvas visible
   //   this.ctxVisible.clearRect(0, 0, this.visibleCanvas.nativeElement.width, this.visibleCanvas.nativeElement.height);
@@ -275,6 +266,20 @@ export class MapCanvasComponent {
         return hex.length === 1 ? "0" + hex : hex;
       }).join('');
   }
+  private hexToRgba(hex: string, alpha: number = 1): Array<number> {
+
+    hex = hex.replace(/^#/, '');
+
+    if (hex.length === 3) {
+      hex = hex.split('').map(char => char + char).join('');
+    }
+
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    return [r, g, b, alpha];
+  }
   //verifiquem si la casella es clicable
   private hitZone(r: number, g: number, b: number, a: number): boolean{
     var hit=true;
@@ -290,7 +295,7 @@ export class MapCanvasComponent {
    * */
   private isBorderColor(r: number, g: number, b: number): boolean{
     return r === 0 && g === 0 && b === 0;
-  };
+  }
   private hideModal(){
     document.body.classList.remove('modal-open');
     var modalElement = this.modal.nativeElement;

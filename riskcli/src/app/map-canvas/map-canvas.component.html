@@ -37,7 +37,7 @@
       <button id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
    </div>
   <!-- Informació jugadors -->
-  <div class="ms-3 mt-2 d-flex flex-row flex-wrap col-1 position-absolute" >
+  <div class="ms-3 mt-1 d-flex flex-row flex-wrap col-1 position-absolute align-items-center h-100" >
     <div *ngFor="let item of [].constructor(global.sala.connected); let i = index">
       <div id="jugador" class="boxborder mb-1 position-relative">
         @if(global.activePlayer.id==global.jugadors[i].id){
@@ -67,7 +67,7 @@
   </div>
   <!-- Mapas -->
   <div id="map" class="boxborder boxshadow">
-    <div class="d-flex position-relative boxinside">
+    <div class="d-flex position-relative boxinside" style='background-color: lightseagreen'>
       <button id="disconnect" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">⨉</button>
       <h4 id="cntrybx" #countrybox class="position-absolute ms-3 mt-1"></h4>
       <!-- Mapa visible -->
