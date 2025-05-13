@@ -49,7 +49,7 @@ export class MapCanvasComponent {
             return e.id==message.response.active_player
           })!;
           switch(message.response.fase){
-            case 'deployment':
+            case 'deploy':
               this.colocarTropa(message.response.info.setup);
               break;
           }
@@ -184,7 +184,7 @@ export class MapCanvasComponent {
   }
   onMouseMove(event: MouseEvent): void {
     var info=this.eventInfo(event);
-    var hoverColor=this.hoveredColorId;
+    // var hoverColor=this.hoveredColorId;
 
     // if(info.colorId==="#000000"){
     //   this.countrybox.nativeElement.textContent="";
