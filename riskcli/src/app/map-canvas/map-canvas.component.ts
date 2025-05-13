@@ -26,17 +26,11 @@ export class MapCanvasComponent {
   @ViewChild('visibleCanvas') visibleCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('hitCanvas') hitCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('countrybox') countrybox!: ElementRef<HTMLCanvasElement>;
-  @Output() selCountry= new EventEmitter<string>();
-  @Input() msg:any=[];
+  messages: any[] = [];
   img = new Image();
   totalTime=180;
   min: number = 0;
   sec: number = 0;
-
-  private sendInfo(cty: string){
-    this.selCountry.emit(cty);
-
-  }
 
   private ctxVisible!: CanvasRenderingContext2D;
   private ctxHit!: CanvasRenderingContext2D;
@@ -51,11 +45,15 @@ export class MapCanvasComponent {
     this.wsSubscription = this.wsService.canalPartida().subscribe(
       (message: any) => {
         if(message.response.fase){
+          this.global.activePlayer=this.global.jugadors.find((e)=>{
+            return e.id==message.response.active_player
+          })!;
           switch(message.response.fase){
             case 'deployment':
               this.colocarTropa(message.response.info.setup);
               break;
           }
+
         }else if(message.response.surrender){
           if(message.response.surrender==1){
             this.hideModal();
@@ -88,6 +86,24 @@ export class MapCanvasComponent {
     var sala=localStorage.getItem('sala')
     this.wsService.surrenderGame(this.global.user.token, Number(sala));
   }
+  //buquem el jugador
+  private findPlayer(id:number){
+    return this.global.jugadors.find(e=>{
+      return e.id==id
+    })!
+  }
+  private colocarTropa(setup:any){
+    for(var i=0; i<setup.length; i++){
+      var player=this.findPlayer(setup[i].id);
+      setup[i].countries.forEach((e:any)=>{
+        var cntry=this.findCountryByName(e.country);
+        var troops=e.troops;
+        this.messages.push("- Player "+player.nom+" ha ficat "+troops+" a "+cntry.name)
+        this.pintarPais(cntry, player.color);
+        this.insertarNumeroTropas(cntry, troops);
+      })
+    }
+  }
   // startCountdown() {
   //   this.updateTimeDisplay();
 
@@ -105,34 +121,6 @@ export class MapCanvasComponent {
   //   this.seconds = this.totalSeconds % 60;
   // }
 
-  private colocarTropa(setup:any){
-    setup.array.forEach((e:any) => {
-
-    });
-  }
-  private findPlayerColor(id:number){
-    var i=0;
-    var hex;
-    do{
-      if(id==this.global.jugadors[i].id){
-        hex=this.global.jugadors[i].color;
-      }else{
-        i++;
-      }
-    }while(!hex || this.global.jugadors.length<i)
-    return hex;
-  }
-  //busquem la informació del country per nom
-  private findCountrybyText(name: string){
-    var i=0;
-    var country;
-    do{
-      country=this.continentInfo[i].countries.find((p:any)=> p.country === name);
-      i++;
-    }while(!country || this.continentInfo.length<i)
-
-    return country;
-  }
   //funció per extreure la información necesaria del canvas
   private eventInfo(event: any){
     // pasos per retornar el color del background..
@@ -171,17 +159,28 @@ export class MapCanvasComponent {
 
     return country;
   }
+  //busquem la informació del country pel nom
+  private findCountryByName(name: string){
+    var i=0;
+    var country;
+    do{
+      country=this.continentInfo[i].countries.find((p:any)=> p.country === name);
+      i++;
+    }while(!country || this.continentInfo.length<i)
+
+    return country;
+  }
   //insertem la informació de les tropes al country
-  private insertarNumeroTropas(info:any){
+  private insertarNumeroTropas(country:any, troops:number){
     const ctx = this.ctxVisible;
     const imgctx= this.visibleCanvas.nativeElement.getContext('2d');
-    imgctx?.drawImage(this.img, info.x-10,info.y-12.5, 20, 25)
+    imgctx?.drawImage(this.img, country.x-10,country.y-12.5, 20, 25)
 
     ctx.fillStyle = 'white';
     ctx.font = 'bold 12.5px Times New Roman';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText("20", info.x, info.y);
+    ctx.fillText(troops.toString(), country.x, country.y);
   }
   onMouseMove(event: MouseEvent): void {
     var info=this.eventInfo(event);
@@ -200,27 +199,28 @@ export class MapCanvasComponent {
   }
   selectCountry(event: MouseEvent): void {
     var info=this.eventInfo(event);
-    this.wsService.placeTroop(this.global.user.token,info.country.country )
-    this.pintarPais(info, this.global.activePlayer.color)
+    if(info.hitzone){
+      this.wsService.placeTroop(this.global.user.token, info.country.country)
+    }
+
   }
-  private pintarPais(info:any, playerColor: any){
-    for (let i = 0; i < info.data.length; i += 4) {
-      const r = info.data[i];
-      const g = info.data[i + 1];
-      const b = info.data[i + 2];
-      const a = info.data[i + 3];
+  private pintarPais(country:any, playerColor: any){
+    var hitImageData = this.ctxHit.getImageData(0, 0, this.hitCanvas.nativeElement.width, this.hitCanvas.nativeElement.height);
+    var data=hitImageData.data;
+    var visibleImg=this.ctxVisible.getImageData(0, 0, this.hitCanvas.nativeElement.width, this.hitCanvas.nativeElement.height)
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const a = data[i + 3];
       const currentColor=this.rgbToHex(r,g,b);
-      //Revisar si realmente es una hitzone
-      if (info.hitzone){
-        if (currentColor === info.colorId) {
-          var color=this.hexToRgba(playerColor)
-          info.visibleImg.data[i] = color[0];
-          info.visibleImg.data[i + 1] = color[1];
-          info.visibleImg.data[i + 2] = color[2];
-          info.visibleImg.data[i + 3] = 255;
-          this.ctxVisible.putImageData(info.visibleImg, 0, 0);
-          this.insertarNumeroTropas(info);
-        }
+      if (currentColor === country.hex) {
+        var color=this.hexToRgba(playerColor)
+        visibleImg.data[i] = color[0];
+        visibleImg.data[i + 1] = color[1];
+        visibleImg.data[i + 2] = color[2];
+        visibleImg.data[i + 3] = 255;
+        this.ctxVisible.putImageData(visibleImg, 0, 0);
       }
     }
   }

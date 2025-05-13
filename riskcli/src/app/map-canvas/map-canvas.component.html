@@ -20,14 +20,14 @@
     </div>
   </div>
   <!-- counter e info de partida -->
-   <div id="gamestatus" class="d-flex flex-row justify-content-between align-items-center mt-4 col-6">
-      <div id="timer" class="boxborder col-3">
+   <div id="gamestatus" class="d-flex flex-row justify-content-between align-items-center mt-4">
+      <div id="timer" class="boxborder">
         <div class="boxinside align-items-center ps-3 d-flex" style='background-color: {{global.activePlayer.color}}'>
           <h4 class="p-0 m-0">Temps:</h4>
           <h4 #timer class="ms-3 p-0 m-0">{{min}}:{{sec}}</h4>
         </div>
       </div>
-      <div id="phases" class="boxborder col-4">
+      <div id="phases" class="boxborder">
         <div class="boxinside d-flex flex-row justify-content-between ps-3 pe-3" style='background-color: {{global.activePlayer.color}}'>
           <img id="icon" src="/img/deploy.png" alt="deployment">
           <img id="icon" src="/img/canon.png" alt="deployment">
@@ -80,10 +80,9 @@
    <div id="missatges" class="mt-2">
       <h3 class="text-center">Estatus Partida</h3>
       <div id="msg">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam commodi accusantium mollitia iste fugit excepturi aliquam, aut libero voluptatibus delectus exercitationem suscipit porro cum odio pariatur! Laboriosam corrupti ullam nostrum!
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illum assumenda pariatur itaque hic facilis modi, magnam, minima repellendus, nemo quo eum? Libero exercitationem repellat, mollitia ratione culpa nostrum nam consequuntur!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum sunt qui, voluptatibus ipsa laboriosam fugiat ea excepturi minima ipsam laborum, deleniti delectus incidunt distinctio, eum rem. Dolores labore fuga tempore!
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo minima incidunt vero, tenetur architecto voluptas ad hic repellat eos doloribus aperiam culpa, repudiandae consectetur, tempora quas voluptates ducimus iste facilis.
+        <div *ngFor="let message of messages" id="msgText">
+          {{ message }}
+        </div>
       </div>
    </div>
 </div>

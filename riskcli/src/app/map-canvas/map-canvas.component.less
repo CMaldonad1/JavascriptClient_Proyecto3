@@ -71,24 +71,33 @@
       padding:12px;
       background-color: rgba(0, 0, 0, 0.61);
       border-radius: 15px;
-      overflow-wrap: break-word;
       overflow-y: scroll;
       height:90%;
-      display:flex;
       width:@message;
-      flex-direction: column-reverse;
+      #msgText{
+        font-family: 'Times New Roman', Times, serif;
+      }
     }
-
   }
   #gamestatus{
     display:flex;
     flex:row;
     position: absolute;
     height:40px;
+    width:700px;
     margin-left: calc(@box_width + 85px);
+    #timer{
+      width:165px;
+    }
+    #phases{
+      width:240px;
+    }
     #icon{
       height: 30px;
       width: 30px;
+    }
+    #nextPhase{
+      width:130px;
     }
     .boxinside{
       padding:5px;

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 import { Observable, Subject } from 'rxjs';
+import { GlobalService } from '../services/global.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class WebsocketService {
       if ( msg.response['token'] || msg.status== 419 ) this.canalLogin$.next(msg);
       if ( msg.response['salas'] || msg.response['sala_id']) this.canalLobby$.next(msg);
       if ( msg.response['sala']  || msg.response['players'] || msg.response['start'] || msg.response['left']) this.canalSala$.next(msg);
-      if ( msg.response['deployment'] || msg.response['countries'] || msg.response['surrender'])  this.canalPartida$.next(msg);
+      if ( msg.response['fase'] || msg.response['countries'] || msg.response['surrender'])  this.canalPartida$.next(msg);
     });
   }
 
@@ -119,6 +120,15 @@ export class WebsocketService {
       token: token,
       info:{
         country:cntry
+      }
+    })
+  }
+  public reinforce(token:string, info:any){
+    this.sendMsg({
+      action:'reinforce',
+      token: token,
+      info:{
+        info
       }
     })
   }
