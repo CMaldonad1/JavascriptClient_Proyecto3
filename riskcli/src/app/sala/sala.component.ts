@@ -47,6 +47,8 @@ export class SalaComponent {
     var sala= localStorage.getItem('sala')
     if(sala){
       this.wsService.entrarSala(this.global.user.token, Number(sala));
+    }else{
+      this.router.navigate(['/lobby']);
     }
   }
   sendMessage(message:any) {

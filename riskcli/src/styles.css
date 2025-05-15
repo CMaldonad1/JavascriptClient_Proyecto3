@@ -9,7 +9,7 @@ body {
 }
 body {
   font-family: 'FinalFantasy';
-  background-size: auto;
+  background-size: cover;
   background-position: 50% 50%;
   background-repeat: no-repeat;
   background-image: url(../public/img/background.jpg);

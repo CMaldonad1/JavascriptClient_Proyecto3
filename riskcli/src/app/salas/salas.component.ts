@@ -38,7 +38,9 @@ export class SalasComponent {
   ngOnInit() {
     this.wsSubscription = this.wsService.canalLobby().subscribe(
       (message: any) => {
+        console.info(message);
         if(message.response.sala_id && !localStorage.getItem('sala')){
+          console.info(message);
           this.entrarSala(message.response.sala_id)
         }else if(message.response.salas){
           message.response.salas.forEach((sala:any)=> {

@@ -8,7 +8,7 @@ import { GlobalService } from '../services/global.service';
 })
 export class WebsocketService {
   //My server
-  private readonly SERVER ='ws://localhost:8765';
+  private readonly SERVER ='ws://localhost:8080';
   //JA Server
   // private readonly SERVER ='ws://10.200.1.4:8080';
 
@@ -22,7 +22,6 @@ export class WebsocketService {
 
   constructor() {
     this.socket$.subscribe(msg => {
-      console.info(msg);
       if ( msg.response['token'] || msg.status== 419 ) this.canalLogin$.next(msg);
       if ( msg.response['salas'] || msg.response['sala_id']) this.canalLobby$.next(msg);
       if ( msg.response['sala']  || msg.response['players'] || msg.response['start'] || msg.response['left']) this.canalSala$.next(msg);
@@ -114,20 +113,34 @@ export class WebsocketService {
       }
     });
   }
-  public placeTroop(token:string, cntry:string){
+  public placeTroop(token:string, id:number, cntry:string){
     this.sendMsg({
       action:'deploy',
       token: token,
       info:{
+        sala:id,
         country:cntry
       }
     })
   }
-  public reinforce(token:string, info:any){
+  public invadeCountry(token:string, id:number, attacker:string, troops:number, defensor:string){
+    this.sendMsg({
+      action:'invade',
+      token: token,
+      info:{
+        sala:id,
+        attacker:attacker,
+        troops:troops,
+        defensor:defensor
+      }
+    })
+  }
+  public reinforce(token:string, id:number, info:any){
     this.sendMsg({
       action:'reinforce',
       token: token,
       info:{
+        sala:id,
         info
       }
     })

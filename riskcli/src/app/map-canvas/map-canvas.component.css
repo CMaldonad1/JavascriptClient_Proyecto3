@@ -21,6 +21,9 @@
 :host #map .boxinside {
   padding: 0;
 }
+:host #map .boxinside .country:hover {
+  fill: grey;
+}
 :host #activeBorder {
   rotate: 90deg;
   z-index: 1;
