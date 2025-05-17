@@ -1,0 +1,48 @@
+<div class="col-3">
+  <!-- Titols -->
+  <div  class="d-flex flex-row justify-content-around">
+    <h3>Atacant:</h3>    <h3>Defensor:</h3>
+  </div>
+  <!-- Daus -->
+  <div class="d-flex flex-row justify-content-around align-items-center">
+    <div #attacker>
+      @for(i of [].constructor(attackerDices); track i){
+        <div class="dice-wrapper">
+            <div class="dice-container">
+                <div id="dice" class="dice rotation">
+                    <div class="face front">1</div>
+                    <div class="face back">2</div>
+                    <div class="face right">3</div>
+                    <div class="face left">4</div>
+                    <div class="face top">5</div>
+                    <div class="face bottom">6</div>
+                </div>
+            </div>
+        </div>
+      }
+    </div>
+    <div #defender>
+      @for(i of [].constructor(defenderDices); track i){
+        <div class="dice-wrapper">
+            <div class="dice-container">
+                <div id="dice" class="dice rotation">
+                    <div class="face front">1</div>
+                    <div class="face back">2</div>
+                    <div class="face right">3</div>
+                    <div class="face left">4</div>
+                    <div class="face top">5</div>
+                    <div class="face bottom">6</div>
+                </div>
+            </div>
+        </div>
+      }
+    </div>
+  </div>
+  <input type="range" min="1" max="3" [value]="attackerDices" (input)="actualizarAtacante($event)" class="slider me-3 col-4">
+  <h3 class="m-4" style="color:white">{{attackerDices}}</h3>
+  <button (click)="diceRoll()">Roll</button>
+</div>
+
+
+
+

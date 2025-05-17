@@ -21,8 +21,35 @@
 :host #map .boxinside {
   padding: 0;
 }
+:host #map .boxinside .country {
+  transition: all 0.2s ease !important;
+}
 :host #map .boxinside .country:hover {
-  fill: grey;
+  fill: #bac4b4 !important;
+  transform: translateY(-5px);
+  -webkit-filter: drop-shadow(4px 4px 3px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(4px 4px 3px rgba(0, 0, 0, 0.7));
+}
+:host #map .boxinside .attackto {
+  transition: all 0.2s ease !important;
+  transform: translateY(-5px);
+  -webkit-filter: drop-shadow(4px 4px 3px rgba(255, 1, 213, 0.884));
+  filter: drop-shadow(4px 4px 3px rgba(255, 1, 213, 0.884));
+  fill: rgba(0, 225, 255, 0.377);
+}
+:host #map .boxinside .attackto:hover {
+  fill: #bac4b4 !important;
+}
+:host #map .boxinside .selected {
+  transition: all 0.2s ease !important;
+  transform: translateY(-5px);
+  -webkit-filter: drop-shadow(4px 4px 3px rgba(245, 9, 9, 0.925));
+  filter: drop-shadow(4px 4px 3px rgba(245, 9, 9, 0.925));
+  fill: rgba(255, 138, 4, 0.452);
+}
+:host #map .boxinside .unclickable {
+  pointer-events: none;
+  cursor: not-allowed;
 }
 :host #activeBorder {
   rotate: 90deg;

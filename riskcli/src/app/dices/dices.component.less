@@ -1,0 +1,104 @@
+@side:50px;
+@trPos: calc(@side / 2);
+@trNeg: calc(@trPos * -1);
+@margin: calc(@trPos/2);
+
+.dice-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: @margin 0;
+}
+
+.dice-container {
+    perspective: 800px;
+}
+
+.dice {
+    width: @side;
+    height: @side;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s ease-out;
+}
+.face {
+    position: absolute;
+    width: @side;
+    height: @side;
+    border: 2px solid #fff;
+    // background-color: red;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff; /* Default text color */
+}
+
+/* Face positions for a true 3D cube */
+.front  { transform: translateZ(@trPos); }
+.back   { transform: translateZ(@trNeg) rotateY(180deg); }
+.right  { transform: translateX(@trPos) rotateY(90deg); }
+.left   { transform: translateX(@trNeg) rotateY(-90deg); }
+.top    { transform: translateY(@trNeg) rotateX(90deg); }
+.bottom { transform: translateY(@trPos) rotateX(-90deg); }
+
+/* Stable states maintaining 3D structure */
+.show-1 { transform: rotateX(0deg) rotateY(0deg); }
+.show-2 { transform: rotateX(0deg) rotateY(180deg); }
+.show-3 { transform: rotateX(0deg) rotateY(-90deg); }
+.show-4 { transform: rotateX(0deg) rotateY(90deg); }
+.show-5 { transform: rotateX(-90deg) rotateY(0deg); }
+.show-6 { transform: rotateX(90deg) rotateY(0deg); }
+
+/* Rolling animation */
+@keyframes roll {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(720deg) rotateY(720deg); }
+}
+@keyframes roll1 {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(720deg) rotateY(720deg); }
+}
+@keyframes roll2 {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(720deg) rotateY(900deg); }
+}
+@keyframes roll3 {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(720deg) rotateY(630deg); }
+}
+@keyframes roll4 {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(720deg) rotateY(810deg); }
+}
+@keyframes roll5 {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(630deg) rotateY(720deg); }
+}
+@keyframes roll6 {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(810deg) rotateY(720deg); }
+}
+.rotation{
+  animation: roll 6s linear infinite;
+}
+.rolling1 {
+    animation: roll1 1s ease-out forwards;
+}
+.rolling2 {
+    animation: roll2 1s ease-out forwards;
+}
+.rolling3 {
+    animation: roll3 1s ease-out forwards;
+}
+.rolling4 {
+    animation: roll4 1s ease-out forwards;
+}
+.rolling5 {
+    animation: roll5 1s ease-out forwards;
+}
+.rolling6 {
+    animation: roll6 1s ease-out forwards;
+}

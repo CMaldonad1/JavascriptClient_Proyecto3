@@ -1,5 +1,6 @@
 @box_width: 230px;
 @message: 260px;
+@hoverColor: rgb(186, 196, 180);
 :host{
   h5{
     text-overflow: ellipsis;
@@ -23,9 +24,34 @@
     .boxinside{
       padding:0;
       .country{
+        transition: all 0.2s ease !important;
         &:hover{
-          fill:grey;
+          fill:@hoverColor !important;
+          transform: translateY(-5px);
+          -webkit-filter: drop-shadow( 4px 4px 3px rgba(0, 0, 0, .7));
+          filter: drop-shadow( 4px 4px 3px rgba(0, 0, 0, .7));
         }
+      }
+      .attackto{
+        transition: all 0.2s ease !important;
+        transform: translateY(-5px);
+        -webkit-filter: drop-shadow( 4px 4px 3px rgba(255, 1, 213, 0.884));
+        filter: drop-shadow( 4px 4px 3px rgba(255, 1, 213, 0.884));
+        fill:rgba(0, 225, 255, 0.377);
+        &:hover{
+          fill:@hoverColor !important;
+        }
+      }
+      .selected{
+        transition: all 0.2s ease !important;
+        transform: translateY(-5px);
+        -webkit-filter: drop-shadow( 4px 4px 3px rgba(245, 9, 9, 0.925));
+        filter: drop-shadow( 4px 4px 3px rgba(245, 9, 9, 0.925));
+        fill:rgba(255, 138, 4, 0.452);
+      }
+      .unclickable{
+        pointer-events: none;
+        cursor: not-allowed;
       }
     }
 

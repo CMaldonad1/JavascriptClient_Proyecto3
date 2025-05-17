@@ -27,14 +27,17 @@ export class MapCanvasComponent {
   @ViewChild('mapSvg', { static: true }) svgRef!: ElementRef<SVGSVGElement>;
   @ViewChild('countrybox') countrybox!: ElementRef<HTMLCanvasElement>;
   messages: any[] = [];
-  fase: string = "deploy";
+  fase: string = "attack";
   img = new Image();
-  totalTime=180;
+  totalTime=0;
   min: number = 0;
   sec: number = 0;
   unblock: string="none";
   lastClickTime: number = 0;
-  clickDelay: number = 300; // ms
+  clickDelay: number = 600; // ms
+  attacker:any = "";
+  defender:string = "";
+  activateDices:boolean=false;
 
   private ctxHit!: CanvasRenderingContext2D;
   countryInfo: any = continentData;
@@ -44,18 +47,19 @@ export class MapCanvasComponent {
     this.wsSubscription = this.wsService.canalPartida().subscribe(
       (message: any) => {
         if(message.response.fase){
-          this.fase=message.response.fase;
+          // this.fase=message.response.fase;
           this.global.activePlayer=this.global.jugadors.find((e)=>{
             return e.id==message.response.active_player
           })!;
           this.activateSVG()
-          switch(this.fase){
-            case 'deploy':
-              this.messageUpdate()
-              this.colocarTropa(message.response.info.setup);
-              break;
-          }
+          // switch(this.fase){
+          //   case 'deploy':
+          this.messageUpdate()
+          this.colocarTropa(message.response.info.setup);
+            //   break;
+            // case 'attack':
 
+          // }
         }else if(message.response.surrender){
           if(message.response.surrender==1){
             // this.hideModal();
@@ -93,33 +97,41 @@ export class MapCanvasComponent {
           var country=this.countryInfo[idCntry]
           this.updateCountryJson(idCntry, playerId, troops);
           this.global.jugadors[posPlayer].tropas+=troops;
-          this.pintarPais(country.country, this.global.jugadors[posPlayer].color);
+          this.pintarPais(country.country, this.global.jugadors[posPlayer]);
           this.insertarNumeroTropas(country, troops);
         })
       }
     }
   }
   private messageUpdate(){
+      var ownTurn=this.global.user.id==this.global.activePlayer.id;
+      var posPlayer=this.findPlayer(this.global.activePlayer.id);
       switch(this.fase){
         case 'deploy':
-          if(this.global.user.id==this.global.activePlayer.id){
+          if(ownTurn){
             this.messages.push("- Has de colocar una tropa en un territori lliure");
           }else{
-            var posPlayer=this.findPlayer(this.global.activePlayer.id);
-            this.messages.push("- Esperant a que el jugador "+ this.global.jugadors[posPlayer].nom +" coloqui una tropa")
+            this.messages.push("- Fase de deploy de "+ this.global.jugadors[posPlayer].nom )
           }
-
           break;
+        case 'attack':
+          if(ownTurn){
+            this.messages.push("- Estas en la teva fase d'atac. Ara pots intentar conquistar altres territoris")
+          }else{
+             this.messages.push("- Fase d'atack de "+ this.global.jugadors[posPlayer].nom )
+          }
       }
   }
   private updateCountryJson(id:string, player:number, troops:number){
       this.countryInfo[id].player=player;
       this.countryInfo[id].troops=troops;
   }
-  private pintarPais(country:any, playerColor: any){
+  private pintarPais(country:any, player: any){
     const element = this.svgRef.nativeElement.querySelector<SVGElement>(`#${country}`);
-    if(element){
-      element.setAttribute('fill', playerColor);
+    element?.setAttribute('fill', player.color);
+    if(player.id!=this.global.user.id){
+      element?.classList.remove('country');
+      element?.classList.add('unclickable');
     }
   }
   //insertem la informació de les tropes al country
@@ -159,17 +171,17 @@ export class MapCanvasComponent {
     return country;
   }
   onMouseMove(event: MouseEvent): void {
-    const element = event.target as SVGElement;
-    const regionId = element.closest('[id]')?.id;
-    if(regionId!="map"){
-      var id=this.findCountryJson(regionId);
-      if (id) {
-        this.countrybox.nativeElement.textContent=this.countryInfo[id].name;
-      }
+    var element = event.target as SVGElement;
+    var regionId = element.id;
+
+    var id=this.findCountryJson(regionId);
+    if (id>=0) {
+      this.countrybox.nativeElement.textContent=this.countryInfo[id].name;
     }
+
   }
   onMouseLeave(){
-      this.countrybox.nativeElement.textContent="";
+    this.countrybox.nativeElement.textContent="";
   }
   private activateSVG(){
     var aux="none";
@@ -179,19 +191,21 @@ export class MapCanvasComponent {
     this.unblock=aux;
   }
   selectCountry(event: MouseEvent): void {
-    const now = Date.now();
+    var now = Date.now();
     if (now - this.lastClickTime < this.clickDelay) {
       return; // Ignora el segundo click
     }
     this.lastClickTime = now;
-    this.unblock="none";
     var element = event.target as SVGElement;
-    var regionId = element.closest('[id]')?.id;
-    if(regionId!="map" && regionId){
+    var regionId=element.id;
+    //verifiquem l'id del pais escollit, si ha clickat al SVG no hi haura region
+    if(regionId.length>0){
       var idCountry=this.findCountryJson(regionId);
+      var countrySelected=this.countryInfo[idCountry];
       switch(this.fase){
         case 'deploy':
-          var countryOwner=this.countryInfo[idCountry].player;
+          this.unblock="none"; //no deixem fer mes clicks
+          var countryOwner=countrySelected.player;
           if(countryOwner==this.global.activePlayer.id || countryOwner==""){
             this.wsService.placeTroop(this.global.user.token, this.global.sala.id ,regionId)
           }else{
@@ -200,7 +214,56 @@ export class MapCanvasComponent {
             this.unblock="auto";
           }
           break;
+        case 'deploy_combat': //pendiente de cambio
+          break;
+        case 'attack':
+            //si no hi ha un country seleccionat per attacar o s'ha tornat a seleccionar el mateix
+            if(this.attacker=="" || this.attacker.country==countrySelected.country){
+              this.borderCountries(countrySelected);
+              this.blockUnblockAll(countrySelected);
+            //si ja hi ha un atacker verifiquem que el 2n country seleccionat es atacable
+            }else{
+              if(this.attacker.borders.includes(countrySelected.country)){
+                this.defender=countrySelected;
+                //una vegada seleccionat defensor es seleccionará les tropes amb les que atacar
+                this.activateDices=true;
+              }else{
+                this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+countrySelected.name+'</b>');
+              }
+            }
+          break;
+        case 'reinforcement':
+          break;
       }
     }
+  }
+  private borderCountries(country: any){
+    var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${country.country}`);
+    selected?.classList.toggle('selected')
+    selected?.classList.toggle('country')
+    country.borders.forEach((e:string) => {
+      const element = this.svgRef.nativeElement.querySelector<SVGElement>(`#${e}`);
+      element?.classList.toggle('attackto');
+    });
+  }
+  private blockUnblockAll(country: any){
+    //si el attacker es igual al country
+    var block: boolean = (this.attacker=="") ? true : false;
+    this.countryInfo.forEach((c:any) => {
+      var cntry=c.country;
+      if(!country.borders.includes(cntry) && country.country!=cntry){
+        var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${cntry}`);
+        selected?.classList.toggle('unclickable')
+      }
+    });
+    //si s'ha toranat a clickar al country attacant es desfá tot
+    this.attacker=(block?country:"");
+    if(!block) this.defender="";
+  }
+  private resetStatusBlocks(){
+    this.countryInfo.forEach((c:any) =>{
+      var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${c.country}`);
+      (c.player==this.global.user.id)?selected?.classList.remove('unclickable'):selected?.classList.add('unclickable')
+    })
   }
 }
