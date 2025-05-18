@@ -15,25 +15,25 @@
 }
 
 .dice {
-    width: @side;
-    height: @side;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 1s ease-out;
+  margin-bottom:15px;
+  width: @side;
+  height: @side;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1s ease-out;
 }
 .face {
-    position: absolute;
-    width: @side;
-    height: @side;
-    border: 2px solid #fff;
-    // background-color: red;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #fff; /* Default text color */
+  position: absolute;
+  width: @side;
+  height: @side;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff; /* Default text color */
 }
 
 /* Face positions for a true 3D cube */
@@ -45,12 +45,12 @@
 .bottom { transform: translateY(@trPos) rotateX(-90deg); }
 
 /* Stable states maintaining 3D structure */
-.show-1 { transform: rotateX(0deg) rotateY(0deg); }
-.show-2 { transform: rotateX(0deg) rotateY(180deg); }
-.show-3 { transform: rotateX(0deg) rotateY(-90deg); }
-.show-4 { transform: rotateX(0deg) rotateY(90deg); }
-.show-5 { transform: rotateX(-90deg) rotateY(0deg); }
-.show-6 { transform: rotateX(90deg) rotateY(0deg); }
+// .show-1 { transform: rotateX(0deg) rotateY(0deg); }
+// .show-2 { transform: rotateX(0deg) rotateY(180deg); }
+// .show-3 { transform: rotateX(0deg) rotateY(-90deg); }
+// .show-4 { transform: rotateX(0deg) rotateY(90deg); }
+// .show-5 { transform: rotateX(-90deg) rotateY(0deg); }
+// .show-6 { transform: rotateX(90deg) rotateY(0deg); }
 
 /* Rolling animation */
 @keyframes roll {

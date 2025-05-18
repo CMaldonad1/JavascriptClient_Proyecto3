@@ -46,7 +46,7 @@ export class SalaComponent {
     );
     var sala= localStorage.getItem('sala')
     if(sala){
-      this.wsService.entrarSala(this.global.user.token, Number(sala));
+      this.wsService.entrarSala(Number(sala));
     }else{
       this.router.navigate(['/lobby']);
     }
@@ -77,7 +77,7 @@ export class SalaComponent {
   }
 
   iniciarPartida(){
-    this.wsService.startGame(this.global.user.token, this.global.sala.id);
+    this.wsService.startGame();
   }
 
   public desconectaJugador(id: number){
@@ -87,7 +87,7 @@ export class SalaComponent {
   }
   tornarLobby(){
     this.global.jugadors=[];
-    this.wsService.tornarLobby(this.global.user.token, this.global.sala.id)
+    this.wsService.tornarLobby()
   }
 
   ngOnDestroy() {

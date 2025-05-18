@@ -7,15 +7,17 @@ import { Component, ViewChild, ElementRef, Input } from '@angular/core';
   styleUrl: './dices.component.less'
 })
 export class DicesComponent {
-  @Input() attackerDices:number=1;
-  @Input() defenderDices:number=2;
-  @Input() attackerColor:string="red";
-  @Input() defenderColor:string="blue";
-  @Input() attackerResults:number[]=[6,4,2];
-  @Input() defenderResults:number[]=[3,1];
+  @Input() attackerDices:number=0;
+  @Input() defenderDices:number=0;
+  @Input() attackerColor:string="grey";
+  @Input() defenderColor:string="grey";
+  @Input() attackerCountry: any="";
+  @Input() defenderCountry: any="";
   @ViewChild('attacker') attacker!: ElementRef<HTMLElement>;
   @ViewChild('defender') defender!: ElementRef<HTMLElement>;
   class: string[]=['rolling1','rolling2','rolling3','rolling4','rolling5','rolling6']
+  attDice?:any;
+  defDice?:any;
 
   ngAfterViewInit() {
     this.pintarAttacker();
@@ -23,6 +25,9 @@ export class DicesComponent {
   }
   ngAfterViewChecked(){
     this.pintarAttacker();
+    this.pintarDefensor();
+    this.attDice=this.attacker.nativeElement.querySelectorAll<HTMLElement>(".dice");
+    this.defDice=this.defender.nativeElement.querySelectorAll<HTMLElement>(".dice");
   }
   private paintDice(el:NodeListOf<HTMLElement>, color:string){
     el.forEach( (e) =>{
@@ -37,26 +42,19 @@ export class DicesComponent {
     var def=this.defender.nativeElement.querySelectorAll<HTMLElement>(".face");
     this.paintDice(def, this.defenderColor);
   }
-  public diceRoll(){
-    var att=this.attacker.nativeElement.querySelectorAll<HTMLElement>(".dice");
-    var def=this.defender.nativeElement.querySelectorAll<HTMLElement>(".dice");
-    this.showResult(att, this.attackerResults);
-    this.showResult(def, this.defenderResults)
+  diceRoll(attackerResults: number[], defenderResults: number[]){
+    this.showResult(this.attDice, attackerResults);
+    this.showResult(this.defDice, defenderResults);
   };
-
   private showResult(el:NodeListOf<HTMLElement>, result:number[]){
     for(var i=0; i<el.length; i++){
       el[i].classList.remove("rotation");
       el[i].classList.add(this.class[result[i]-1]);
     }
   }
-  actualizarAtacante(event: Event){
-    const input = event.target as HTMLInputElement;
-    this.attackerDices = +input.value;
-    var att=this.attacker.nativeElement.querySelectorAll<HTMLElement>(".dice");
-    this.resetDaus(att);
-    var def=this.defender.nativeElement.querySelectorAll<HTMLElement>(".dice");
-    this.resetDaus(def);
+  actualizarDaus(){
+    this.resetDaus(this.attDice);
+    this.resetDaus(this.defDice);
   }
   private resetDaus(el:NodeListOf<HTMLElement>){
     el.forEach( (e) =>{

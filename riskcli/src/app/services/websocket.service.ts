@@ -20,7 +20,7 @@ export class WebsocketService {
   private canalSala$ = new Subject<any>();
   private canalPartida$ = new Subject<any>();
 
-  constructor() {
+  constructor(public global: GlobalService) {
     this.socket$.subscribe(msg => {
       if ( msg.response['token'] || msg.status== 419 ) this.canalLogin$.next(msg);
       if ( msg.response['salas'] || msg.response['sala_id']) this.canalLobby$.next(msg);
@@ -61,84 +61,84 @@ export class WebsocketService {
       }
     })
   }
-  public requestRooms(token:string){
+  public requestRooms(){
     this.sendMsg({
         action: 'lobby',
-        token: token
+        token: this.global.user.token
       })
   }
-  public tornarLobby(token:string, salaid: number){
+  public tornarLobby(){
     this.sendMsg({
         action:'leave_sala',
-        token: token,
+        token: this.global.user.token,
         info:{
-          sala: salaid
+          sala: this.global.sala.id
         }
       });
   }
-  public entrarSala(token:string, id: Number){
+  public entrarSala(id: Number){
     this.sendMsg({
       action:'join',
-      token: token,
+      token: this.global.user.token,
       info:{
         sala:id
       }
     });
   }
-  public crearSala(token:string, nom: string, max_players:any){
+  public crearSala(nom: string, max_players:any){
     this.sendMsg({
       action:'create',
-      token: token,
+      token: this.global.user.token,
       info:{
         nom: nom,
         max_players: max_players
       }
     });
   }
-  public startGame(token:string,id:number){
+  public startGame(){
     this.sendMsg({
         action:'start_match',
-        token: token,
+        token: this.global.user.token,
         info:{
-          sala:id
+          sala:this.global.sala.id,
         }
       });
   }
-  public surrenderGame(token:string, id:Number){
+  public surrenderGame(){
     this.sendMsg({
       action:'surrender',
-      token: token,
+      token: this.global.user.token,
       info:{
-        sala:id
+        sala:this.global.sala.id
       }
     });
   }
-  public placeTroop(token:string, id:number, cntry:string){
+  public placeTroop(cntry:string){
     this.sendMsg({
       action:'deploy',
-      token: token,
+      token: this.global.user.token,
       info:{
-        sala:id,
+        sala: this.global.sala.id,
         country:cntry
       }
     })
   }
-  public invadeCountry(token:string, id:number, attacker:string, troops:number, defensor:string){
+  public invadeCountry(attacker:string, troops:number, defensor:string){
     this.sendMsg({
       action:'invade',
-      token: token,
+      token: this.global.user.token,
       info:{
-        sala:id,
+        sala: this.global.sala.id,
         attacker:attacker,
         troops:troops,
         defensor:defensor
       }
     })
   }
-  public reinforce(token:string, id:number, info:any){
+  public reinforce(id:number, info:any){
     this.sendMsg({
       action:'reinforce',
-      token: token,
+      token: this.global.user.token,
       info:{
         sala:id,
         info

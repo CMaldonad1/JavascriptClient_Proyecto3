@@ -393,9 +393,32 @@
         </div>
       </div>
    </div>
-   <div id="dices">
-
-   </div>
+   <!-- Daus -->
+   @if(attacker!="" && defender!=""){
+      <div id="dices" >
+          <button id="disconnect" type="button" class="btn btn-danger" (click)="cancelAttack()">⨉</button>
+          <div class="d-flex flex-row justify-content-center align-items-center">
+            <h5 class="m-0 me-2">Troops:</h5>
+            <input type="range" min="1" max="3" value="{{attackerDice}}" class="slider me-3 col-4" (input)="calcularDausAtacant($event)">
+          </div>
+          <app-dices
+            [attackerDices]=3
+            [defenderDices]=2
+            [attackerColor]="this.global.activePlayer.color"
+            [defenderColor]="this.global.jugadors[1].color"
+            [attackerCountry]="this.attacker"
+            [defenderCountry]="this.defender"
+            [attackerDices]="this.attackerDice"
+          ></app-dices>
+          @if(!resultDices){
+            <button (click)="enviarDausResult()"
+            style='background-color: {{global.activePlayer.color}}; color:white' class="btn">Atacar</button>
+          }@else{
+            <button (click)="resetDice()"
+            style='background-color: purple; color:white' class="btn">Continuar</button>
+          }
+      </div>
+   }
 </div>
 
 

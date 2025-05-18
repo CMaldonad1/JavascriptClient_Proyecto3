@@ -59,7 +59,7 @@ export class SalasComponent {
 
   requestRooms(){
     this.salas=[];
-    this.wsService.requestRooms(this.global.user.token);
+    this.wsService.requestRooms();
   }
   private hideModal(){
     document.body.classList.remove('modal-open');
@@ -73,7 +73,7 @@ export class SalasComponent {
     var nom=formValue.name;
     var max_players = formValue.max_players;
 
-    this.wsService.crearSala(this.global.user.token, nom, max_players);
+    this.wsService.crearSala(nom, max_players);
 
   }
   updateJugs(event:any){
@@ -83,7 +83,7 @@ export class SalasComponent {
   }
   entrarSala(id:number){
     localStorage.setItem('sala', id.toString());
-    this.wsService.entrarSala(this.global.user.token, id);
+    this.wsService.entrarSala(id);
     this.redirectSala();
   }
   private redirectSala(){

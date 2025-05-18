@@ -8,6 +8,7 @@
   perspective: 800px;
 }
 .dice {
+  margin-bottom: 15px;
   width: 50px;
   height: 50px;
   position: relative;
@@ -48,24 +49,6 @@
   transform: translateY(calc(50px / 2)) rotateX(-90deg);
 }
 /* Stable states maintaining 3D structure */
-.show-1 {
-  transform: rotateX(0deg) rotateY(0deg);
-}
-.show-2 {
-  transform: rotateX(0deg) rotateY(180deg);
-}
-.show-3 {
-  transform: rotateX(0deg) rotateY(-90deg);
-}
-.show-4 {
-  transform: rotateX(0deg) rotateY(90deg);
-}
-.show-5 {
-  transform: rotateX(-90deg) rotateY(0deg);
-}
-.show-6 {
-  transform: rotateX(90deg) rotateY(0deg);
-}
 /* Rolling animation */
 @keyframes roll {
   0% {

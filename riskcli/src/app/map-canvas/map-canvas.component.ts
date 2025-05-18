@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, Input, Output, EventEmitter, EnvironmentInjector } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, Input, Output, EventEmitter, EnvironmentInjector, viewChild } from '@angular/core';
 import continentData from '../../../public/map.json';
 import { LoginComponent } from '../login/login.component';
 import { WebsocketService } from '../services/websocket.service';
@@ -6,12 +6,13 @@ import { Subscription } from 'rxjs';
 import { GlobalService } from '../services/global.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { DicesComponent } from '../dices/dices.component';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-map-canvas',
-  imports: [CommonModule],
+  imports: [CommonModule, DicesComponent],
   templateUrl: './map-canvas.component.html',
   styleUrl: './map-canvas.component.less'
 })
@@ -26,6 +27,7 @@ export class MapCanvasComponent {
   @ViewChild('hitCanvas') hitCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('mapSvg', { static: true }) svgRef!: ElementRef<SVGSVGElement>;
   @ViewChild('countrybox') countrybox!: ElementRef<HTMLCanvasElement>;
+  @ViewChild(DicesComponent) diceComponent!: DicesComponent;
   messages: any[] = [];
   fase: string = "attack";
   img = new Image();
@@ -36,8 +38,9 @@ export class MapCanvasComponent {
   lastClickTime: number = 0;
   clickDelay: number = 600; // ms
   attacker:any = "";
-  defender:string = "";
-  activateDices:boolean=false;
+  defender:any = "";
+  attackerDice:number=1;
+  resultDices:boolean=false;
 
   private ctxHit!: CanvasRenderingContext2D;
   countryInfo: any = continentData;
@@ -76,8 +79,7 @@ export class MapCanvasComponent {
     this.ctxHit = this.hitCanvas.nativeElement.getContext('2d')!;
   }
   public surrender(){
-    var sala=localStorage.getItem('sala')
-    this.wsService.surrenderGame(this.global.user.token, Number(sala));
+    this.wsService.surrenderGame();
   }
   //busquem el jugador
   private findPlayer(id:number){
@@ -207,7 +209,7 @@ export class MapCanvasComponent {
           this.unblock="none"; //no deixem fer mes clicks
           var countryOwner=countrySelected.player;
           if(countryOwner==this.global.activePlayer.id || countryOwner==""){
-            this.wsService.placeTroop(this.global.user.token, this.global.sala.id ,regionId)
+            this.wsService.placeTroop(regionId)
           }else{
             var idPlayer=this.findPlayer(countryOwner);
             this.messages.push('<b style="color: red;">- Aquest territory es propietat de '+this.global.jugadors[idPlayer].nom+'</b>');
@@ -226,9 +228,8 @@ export class MapCanvasComponent {
               if(this.attacker.borders.includes(countrySelected.country)){
                 this.defender=countrySelected;
                 //una vegada seleccionat defensor es seleccionará les tropes amb les que atacar
-                this.activateDices=true;
               }else{
-                this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+countrySelected.name+'</b>');
+                this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+this.attacker.name+'</b>');
               }
             }
           break;
@@ -265,5 +266,59 @@ export class MapCanvasComponent {
       var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${c.country}`);
       (c.player==this.global.user.id)?selected?.classList.remove('unclickable'):selected?.classList.add('unclickable')
     })
+  }
+  cancelAttack(){
+    this.borderCountries(this.attacker);
+    this.attacker="";
+    this.defender="";
+  }
+  calcularDausAtacant(event: Event){
+    const input = event.target as HTMLInputElement;
+    this.attackerDice = +input.value;
+    this.diceComponent.actualizarDaus();
+    this.resultDices=false;
+  }
+  enviarDausResult(){
+    var troops=(this.attackerDice>3?3:this.attackerDice);
+    this.wsService.invadeCountry(this.attacker.country, troops, this.defender.country)
+    this.resultDices=true;
+    var attackerResults:number[]=[]
+    var defenderResults:number[]=[]
+    for(var i=0; i<this.attackerDice;i++){
+      attackerResults.push(Math.floor(Math.random() * 6) + 1)
+    }
+    for(var i=0;i<2;i++){
+      defenderResults.push(Math.floor(Math.random() * 6) + 1)
+    }
+    attackerResults.sort((a,b)=> b-a)
+    defenderResults.sort((a,b)=> b-a)
+
+    this.diceComponent.diceRoll(attackerResults,defenderResults);
+  }
+  resetDice(){
+    this.attacker=this.countryInfo[this.findCountryJson(this.attacker.country)];
+    this.defender=this.countryInfo[this.findCountryJson(this.defender.country)];
+    if(this.attacker.troops==1 || this.defender.player==this.global.user.id){
+      this.cancelAttack()
+    }else{
+      this.diceComponent.actualizarDaus()
+      this.resultDices=false;
+    }
+  }
+  private calcularResultat(attackerResults:number[], defenderResults:number[]){
+    var lenAtt=attackerResults.length;
+    var lenDef=defenderResults.length;
+    var resultsComprables=(lenAtt>lenDef?lenDef:lenAtt);
+    var lostAttacker=0, lostDefender=0;
+    for(var i = 0; i<resultsComprables; i++){
+      (attackerResults[i]>defenderResults[i])?lostDefender+=1:lostAttacker+=1
+    }
+    var message="";
+    if(lostAttacker>0){
+      message="El jugador "+" ha perdut "+lostAttacker+" tropes!"
+    }
+    if(lostDefender>0){
+      message="El jugador "+" ha perdut "+lostDefender+" tropes!"
+    }
   }
 }
