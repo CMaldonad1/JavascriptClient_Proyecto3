@@ -55,14 +55,16 @@ export class MapCanvasComponent {
             return e.id==message.response.active_player
           })!;
           this.activateSVG()
-          switch(this.fase){
-            case 'deploy':
-            this.messageUpdate()
-            this.colocarTropa(message.response.info.setup);
-              break;
-            case 'attack':
+          this.messageUpdate()
+          this.colocarTropa(message.response.info.setup);
+          // switch(this.fase){
+          //   case 'deploy':
+          //     this.messageUpdate()
+          //     this.colocarTropa(message.response.info.setup);
+          //     break;
+          //   case 'attack':
 
-          }
+          // }
         }else if(message.response.surrender){
           if(message.response.surrender==1){
             // this.hideModal();
@@ -134,6 +136,9 @@ export class MapCanvasComponent {
     if(player.id!=this.global.user.id){
       element?.classList.remove('country');
       element?.classList.add('unclickable');
+    }else{
+      element?.classList.remove('unclickable');
+      element?.classList.toggle('country');
     }
   }
   //insertem la informació de les tropes al country
