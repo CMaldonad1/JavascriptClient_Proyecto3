@@ -50,19 +50,19 @@ export class MapCanvasComponent {
     this.wsSubscription = this.wsService.canalPartida().subscribe(
       (message: any) => {
         if(message.response.fase){
-          // this.fase=message.response.fase;
+          this.fase=message.response.fase;
           this.global.activePlayer=this.global.jugadors.find((e)=>{
             return e.id==message.response.active_player
           })!;
           this.activateSVG()
-          // switch(this.fase){
-          //   case 'deploy':
-          this.messageUpdate()
-          this.colocarTropa(message.response.info.setup);
-            //   break;
-            // case 'attack':
+          switch(this.fase){
+            case 'deploy':
+            this.messageUpdate()
+            this.colocarTropa(message.response.info.setup);
+              break;
+            case 'attack':
 
-          // }
+          }
         }else if(message.response.surrender){
           if(message.response.surrender==1){
             // this.hideModal();
