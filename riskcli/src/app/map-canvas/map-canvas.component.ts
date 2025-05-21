@@ -29,7 +29,7 @@ export class MapCanvasComponent {
   @ViewChild('countrybox') countrybox!: ElementRef<HTMLCanvasElement>;
   @ViewChild(DicesComponent) diceComponent!: DicesComponent;
   messages: any[] = [];
-  fase: string = "deploy_combat";
+  fase: string = "";
   img = new Image();
   totalTime=0;
   min: number = 0;
@@ -299,12 +299,15 @@ export class MapCanvasComponent {
   }
   // $$$$$ %%%%%% canviar alert per modal !!!!!!
   private attackPhase(countrySelected:any){
-    if(countrySelected.troops>1){
       var sameClick:boolean=(this.attacker.country==countrySelected.country)?true:false;
       //si no hi ha un country seleccionat per attacar o s'ha tornat a seleccionar el mateix
       if(this.attacker=="" || sameClick){
-        this.borderCountries(countrySelected);
-        this.blockUnblockAll(countrySelected);
+        if(countrySelected.troops>1){
+          this.borderCountries(countrySelected);
+          this.blockUnblockAll(countrySelected);
+        }else{
+          alert("Has d'escollir un país amb més d'una tropa per atacar")
+        }
       //si ja hi ha un atacker verifiquem que el 2n country seleccionat es atacable
       }else{
         if(this.attacker.borders.includes(countrySelected.country)){
@@ -314,9 +317,6 @@ export class MapCanvasComponent {
           this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+this.attacker.name+'</b>');
         }
       }
-    }else{
-      alert("Has d'escollir un país amb més d'una tropa per atacar")
-    }
   }
   // $$$$$ %%%%%% canviar alert per modal !!!!!!
   private reinforcementPhase(countrySelected:any){
@@ -346,6 +346,7 @@ export class MapCanvasComponent {
       if(ownerCountry!=this.global.activePlayer.id){
         element?.classList.toggle('attackto');
       }
+        element?.classList.toggle('unclickable');
     });
   }
   //marquem els paisos que estan conectat amb fronteres per moure tropes
