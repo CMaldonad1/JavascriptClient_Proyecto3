@@ -29,42 +29,41 @@ export class MapCanvasComponent {
   @ViewChild('countrybox') countrybox!: ElementRef<HTMLCanvasElement>;
   @ViewChild(DicesComponent) diceComponent!: DicesComponent;
   messages: any[] = [];
-  fase: string = "attack";
+  fase: string = "deploy_combat";
   img = new Image();
   totalTime=0;
   min: number = 0;
   sec: number = 0;
-  unblock: string="none";
+  unblock: string="none"; //or auto
   lastClickTime: number = 0;
   clickDelay: number = 600; // ms
   attacker:any = "";
   defender:any = "";
   attackerDice:number=1;
   resultDices:boolean=false;
+  troopSelect:boolean=false;
+  fiAttack:boolean=false;
+  deployment:any[]=[];
 
   private ctxHit!: CanvasRenderingContext2D;
   countryInfo: any = continentData;
-
+  // $$$$$ %%%%%% canviar alert per modal !!!!!!
   ngOnInit() {
+    console.info(this.global.jugadors);
     this.img.src='img/shield.png';
     this.wsSubscription = this.wsService.canalPartida().subscribe(
       (message: any) => {
         if(message.response.fase){
           this.fase=message.response.fase;
-          this.global.activePlayer=this.global.jugadors.find((e)=>{
-            return e.id==message.response.active_player
-          })!;
+          var posPlayer=this.findPlayer(message.response.active_player);
+          this.global.activePlayer=this.global.jugadors[posPlayer];
           this.activateSVG()
+          this.troopsPlayers(message.response.info, posPlayer);
           this.messageUpdate()
+          if(message.response.info.attacker && message.response.info.defender){
+            this.mostrarTirada(message.response.info.attacker, message.response.info.defender);
+          }
           this.colocarTropa(message.response.info.setup);
-          // switch(this.fase){
-          //   case 'deploy':
-          //     this.messageUpdate()
-          //     this.colocarTropa(message.response.info.setup);
-          //     break;
-          //   case 'attack':
-
-          // }
         }else if(message.response.surrender){
           if(message.response.surrender==1){
             // this.hideModal();
@@ -80,6 +79,18 @@ export class MapCanvasComponent {
   ngAfterViewInit(): void {
     this.ctxHit = this.hitCanvas.nativeElement.getContext('2d')!;
   }
+  private troopsPlayers(info:any, posPlayer:number){
+      var troops=0;
+      switch(this.fase){
+        case 'deploy':
+          troops=1;
+          break;
+        case 'deploy_combat':
+          troops=info.n_tropes;
+          break;
+      }
+      this.global.jugadors[posPlayer].tropas+=troops;
+  }
   public surrender(){
     this.wsService.surrenderGame();
   }
@@ -93,14 +104,12 @@ export class MapCanvasComponent {
     for(var i=0; i<setup.length; i++){
       var playerId=setup[i].player_id;
       var posPlayer=this.findPlayer(playerId);
-      this.global.jugadors[posPlayer].tropas=0;
       if(setup[i].countries){
         setup[i].countries.forEach((e:any)=>{
           var troops= e.troops;
           var idCntry=this.findCountryJson(e.country);
           var country=this.countryInfo[idCntry]
           this.updateCountryJson(idCntry, playerId, troops);
-          this.global.jugadors[posPlayer].tropas+=troops;
           this.pintarPais(country.country, this.global.jugadors[posPlayer]);
           this.insertarNumeroTropas(country, troops);
         })
@@ -115,15 +124,30 @@ export class MapCanvasComponent {
           if(ownTurn){
             this.messages.push("- Has de colocar una tropa en un territori lliure");
           }else{
-            this.messages.push("- Fase de deploy de "+ this.global.jugadors[posPlayer].nom )
+            this.messages.push("- Fase de deploy del jugador "+ this.global.jugadors[posPlayer].nom )
+          }
+          break;
+        case 'deploy_combat':
+          if(ownTurn){
+            this.messages.push("- Reparteix "+this.global.jugadors[posPlayer].tropas+" tropes entre els teus territoris");
+          }else{
+            this.messages.push("- Fase de deploy del jugador "+ this.global.jugadors[posPlayer].nom )
           }
           break;
         case 'attack':
           if(ownTurn){
             this.messages.push("- Estas en la teva fase d'atac. Ara pots intentar conquistar altres territoris")
           }else{
-             this.messages.push("- Fase d'atack de "+ this.global.jugadors[posPlayer].nom )
+             this.messages.push("- Fase d'atac del jugador "+ this.global.jugadors[posPlayer].nom )
           }
+          break;
+        case 'reinforce':
+            if(ownTurn){
+            this.messages.push("- Estas en la teva fase de reforç. Pots moure tropes d'un país a un altre sempre i quan les fronteres estiguin conectades")
+          }else{
+             this.messages.push("- Fase de reforç del jugador "+ this.global.jugadors[posPlayer].nom )
+          }
+          break;
       }
   }
   private updateCountryJson(id:string, player:number, troops:number){
@@ -138,7 +162,7 @@ export class MapCanvasComponent {
       element?.classList.add('unclickable');
     }else{
       element?.classList.remove('unclickable');
-      element?.classList.toggle('country');
+      element?.classList.add('country');
     }
   }
   //insertem la informació de les tropes al country
@@ -174,7 +198,6 @@ export class MapCanvasComponent {
   private findCountryJson(name: any){
     var country;
     country=this.countryInfo.findIndex((p:any)=> p.country === name);
-
     return country;
   }
   onMouseMove(event: MouseEvent): void {
@@ -197,6 +220,7 @@ export class MapCanvasComponent {
     }
     this.unblock=aux;
   }
+  // EN FUNCIÓ DEL CLICK I DE LA FASE ES FARÁ...
   selectCountry(event: MouseEvent): void {
     var now = Date.now();
     if (now - this.lastClickTime < this.clickDelay) {
@@ -211,47 +235,139 @@ export class MapCanvasComponent {
       var countrySelected=this.countryInfo[idCountry];
       switch(this.fase){
         case 'deploy':
-          this.unblock="none"; //no deixem fer mes clicks
-          var countryOwner=countrySelected.player;
-          if(countryOwner==this.global.activePlayer.id || countryOwner==""){
-            this.wsService.placeTroop(regionId)
-          }else{
-            var idPlayer=this.findPlayer(countryOwner);
-            this.messages.push('<b style="color: red;">- Aquest territory es propietat de '+this.global.jugadors[idPlayer].nom+'</b>');
-            this.unblock="auto";
-          }
+          this.deploymentPhase(countrySelected, regionId);
           break;
         case 'deploy_combat': //pendiente de cambio
+          this.deployCombatPhase(countrySelected);
           break;
         case 'attack':
-            //si no hi ha un country seleccionat per attacar o s'ha tornat a seleccionar el mateix
-            if(this.attacker=="" || this.attacker.country==countrySelected.country){
-              this.borderCountries(countrySelected);
-              this.blockUnblockAll(countrySelected);
-            //si ja hi ha un atacker verifiquem que el 2n country seleccionat es atacable
-            }else{
-              if(this.attacker.borders.includes(countrySelected.country)){
-                this.defender=countrySelected;
-                //una vegada seleccionat defensor es seleccionará les tropes amb les que atacar
-              }else{
-                this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+this.attacker.name+'</b>');
-              }
-            }
+          this.attackPhase(countrySelected);
           break;
-        case 'reinforcement':
+        case 'reinforce':
+          this.reinforcementPhase(countrySelected);
           break;
       }
     }
   }
-  private borderCountries(country: any){
-    var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${country.country}`);
+  // FASES DEL JOC
+  private deploymentPhase(countrySelected:any, regionId:string){
+      this.unblock="none"; //no deixem fer mes clicks
+      var countryOwner=countrySelected.player;
+      if(countryOwner==this.global.activePlayer.id || countryOwner==""){
+        this.wsService.placeTroop(regionId)
+      }else{
+        var idPlayer=this.findPlayer(countryOwner);
+        this.messages.push('<b style="color: red;">- Aquest territory es propietat de '+this.global.jugadors[idPlayer].nom+'</b>');
+        this.unblock="auto";
+      }
+  }
+  //selecció del country on es vol afegir tropes
+    // $$$$$ %%%%%% canviar alert per modal !!!!!!
+  private deployCombatPhase(countrySelected:any){
+    if(this.global.activePlayer.tropas==0){
+      this.attacker=countrySelected;
+      var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${countrySelected.country}`);
+      selected?.classList.add('selected')
+      selected?.classList.remove('country')
+      this.troopSelect=true;
+      this.unblock="none"; //no deixem fer mes clicks
+    }else{
+      alert("Ja no et queden tropes. Finalitza torn")
+    }
+  }
+  //tanquem la finestra de inserció de tropes
+  cancelDeployCombat(){
+    this.troopSelect=false;
+    var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${this.attacker.country}`);
+    selected?.classList.remove('selected')
+    selected?.classList.add('country')
+    this.attacker="";
+    this.unblock="auto";
+  }
+  //guardem les tropes que vol ficar al territori i tanquem la finestra
+  saveTroops(){
+    var aux={
+      'country':this.attacker.country,
+      'tropes':this.attackerDice
+    }
+    var posPlayer=this.findPlayer(this.global.activePlayer.id);
+    this.global.jugadors[posPlayer].tropas-=this.attackerDice;
+    this.global.activePlayer= this.global.jugadors[posPlayer];
+    console.info(aux);
+    this.deployment.push(aux);
+    this.cancelDeployCombat()
+  }
+  // $$$$$ %%%%%% canviar alert per modal !!!!!!
+  private attackPhase(countrySelected:any){
+    if(countrySelected.troops>1){
+      var sameClick:boolean=(this.attacker.country==countrySelected.country)?true:false;
+      //si no hi ha un country seleccionat per attacar o s'ha tornat a seleccionar el mateix
+      if(this.attacker=="" || sameClick){
+        this.borderCountries(countrySelected);
+        this.blockUnblockAll(countrySelected);
+      //si ja hi ha un atacker verifiquem que el 2n country seleccionat es atacable
+      }else{
+        if(this.attacker.borders.includes(countrySelected.country)){
+          this.defender=countrySelected;
+          //una vegada seleccionat defensor es seleccionará les tropes amb les que atacar
+        }else{
+          this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+this.attacker.name+'</b>');
+        }
+      }
+    }else{
+      alert("Has d'escollir un país amb més d'una tropa per atacar")
+    }
+  }
+  // $$$$$ %%%%%% canviar alert per modal !!!!!!
+  private reinforcementPhase(countrySelected:any){
+    var sameClick:boolean=(this.attacker.country==countrySelected.country)?true:false;
+    if(this.attacker=="" || sameClick){
+      if(countrySelected.troops>1){
+        this.connectedCountries(countrySelected, sameClick);
+      }else{
+        alert("No hi ha tropes suficients a "+countrySelected.name+" per moure-les a un altre. Mínim ha de quedar 1 tropa per país! ")
+      }
+    }else{
+      this.defender=countrySelected;
+    }
+  }
+  //activem o desactivem el country seleccionat
+  private actDesCountry(c: string){
+    var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${c}`);
     selected?.classList.toggle('selected')
     selected?.classList.toggle('country')
+  }
+  //marquem els paisos que fan frontera y que poden ser attackats
+  private borderCountries(country: any){
+    this.actDesCountry(country.country);
     country.borders.forEach((e:string) => {
       const element = this.svgRef.nativeElement.querySelector<SVGElement>(`#${e}`);
-      element?.classList.toggle('attackto');
+      var ownerCountry=this.countryInfo[this.findCountryJson(e)].player;
+      if(ownerCountry!=this.global.activePlayer.id){
+        element?.classList.toggle('attackto');
+      }
     });
   }
+  //marquem els paisos que estan conectat amb fronteres per moure tropes
+  private connectedCountries(country:any, sameClick:boolean){
+    this.actDesCountry(country.country);
+    this.attacker=(sameClick?"":country);
+    if(!sameClick){
+      this.blockAllCountries();
+      var arrayCountries:string[]=[];
+      arrayCountries.push(country.country)
+      this.revisarFrontera(country.borders, arrayCountries);
+    }else{
+      this.resetStatusBlocks();
+      this.attacker="";
+      this.defender="";
+    }
+  }
+  sendReinforcement(){
+    this.wsService.reinforce(this.attacker.country,this.defender.country,this.attackerDice);
+    this.cancel();
+  }
+  //maquem els paisos que fan frontera amb el country per atacar-los
   private blockUnblockAll(country: any){
     //si el attacker es igual al country
     var block: boolean = (this.attacker=="") ? true : false;
@@ -266,16 +382,56 @@ export class MapCanvasComponent {
     this.attacker=(block?country:"");
     if(!block) this.defender="";
   }
+  //reinicialitzem les clases del SVG en funció de quí poseix el territori
   private resetStatusBlocks(){
     this.countryInfo.forEach((c:any) =>{
       var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${c.country}`);
-      (c.player==this.global.user.id)?selected?.classList.remove('unclickable'):selected?.classList.add('unclickable')
+      selected?.removeAttribute('class');
+      (c.player==this.global.user.id)?selected?.classList.add('country'):selected?.classList.add('unclickable')
     })
   }
-  cancelAttack(){
-    this.borderCountries(this.attacker);
+  //en la fase de reinforçement bloquejem tot el que no es country per després cridar "revisarFrontera"
+  private blockAllCountries(){
+    this.countryInfo.forEach((c:any) =>{
+      var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${c.country}`);
+      if(c.country!=this.attacker.country){
+        selected?.classList.add('unclickable');
+      }
+    })
+  }
+  //revisem les fronteres per veure si son del país i, si ho son, les marquem
+  private revisarFrontera(borders:string[], country:string[]){
+    borders.forEach((e)=>{;
+      var cInfo=this.countryInfo[this.findCountryJson(e)];
+      if(cInfo.player==this.global.activePlayer.id && !country.includes(e)){
+        country.push(e)
+        const element = this.svgRef.nativeElement.querySelector<SVGElement>(`#${e}`);
+        element?.classList.add('moveTroop');
+        element?.classList.remove('unclickable');
+        this.revisarFrontera(cInfo.borders,country);
+      }
+    })
+  }
+  finalitzarFase(){
+    console.info("fi:"+this.deployment);
+    switch(this.fase){
+      case 'deploy_combat':
+        this.wsService.deployCombat(this.deployment);
+        this.deployment.length=0;
+        break;
+      case 'reinforce':
+        break;
+      default:
+        break;
+    }
+  }
+  cancel(){
+    this.resetStatusBlocks();
     this.attacker="";
     this.defender="";
+    this.resultDices=false;
+    this.fiAttack=false;
+    this.attackerDice=1;
   }
   calcularDausAtacant(event: Event){
     const input = event.target as HTMLInputElement;
@@ -297,33 +453,80 @@ export class MapCanvasComponent {
     }
     attackerResults.sort((a,b)=> b-a)
     defenderResults.sort((a,b)=> b-a)
-
-    this.diceComponent.diceRoll(attackerResults,defenderResults);
+    var attacker={
+      'country':this.attacker.country,
+      'dice':attackerResults,
+      'troops':this.attacker.troops,
+      'player_id':2
+    };
+    var defender={
+      'country':this.defender.country,
+      'dice':defenderResults,
+      'troops':this.defender.troops,
+      'player_id':3
+    };
+    this.diceComponent.diceRoll(attacker.dice,defender.dice);
+    this.calcularResultat(attacker,defender);
   }
   resetDice(){
     this.attacker=this.countryInfo[this.findCountryJson(this.attacker.country)];
     this.defender=this.countryInfo[this.findCountryJson(this.defender.country)];
     if(this.attacker.troops==1 || this.defender.player==this.global.user.id){
-      this.cancelAttack()
+      this.cancel()
     }else{
       this.diceComponent.actualizarDaus()
       this.resultDices=false;
     }
   }
-  private calcularResultat(attackerResults:number[], defenderResults:number[]){
-    var lenAtt=attackerResults.length;
-    var lenDef=defenderResults.length;
+  private mostrarTirada(attacker:any, defender:any){
+    if(attacker!="" && defender!=""){
+      this.diceComponent.diceRoll(attacker.dice,defender.dice);
+      this.calcularResultat(attacker,defender);
+    }
+  }
+  private calcularResultat(attacker:any, defender:any){
+    var dictionary=['tropa','tropes'];
+    var lenAtt=attacker.dice.length;
+    var lenDef=defender.dice.length;
     var resultsComprables=(lenAtt>lenDef?lenDef:lenAtt);
     var lostAttacker=0, lostDefender=0;
+
     for(var i = 0; i<resultsComprables; i++){
-      (attackerResults[i]>defenderResults[i])?lostDefender+=1:lostAttacker+=1
+      (attacker.dice[i]>defender.dice[i])?lostDefender+=1:lostAttacker+=1
     }
-    var message="";
+
+    var message="- ";
+    var cntryAt=this.countryInfo[this.findCountryJson(attacker.country)];
+    var cntryDef=this.countryInfo[this.findCountryJson(defender.country)];
+    var d=this.global.jugadors[this.findPlayer(defender.player_id)];
+    var a=this.global.jugadors[this.findPlayer(attacker.player_id)];
     if(lostAttacker>0){
-      message="El jugador "+" ha perdut "+lostAttacker+" tropes!"
+      message+="El jugador "+a.nom+" ha perdut "+lostAttacker+" "+dictionary[lostAttacker-1]+
+                " en "+cntryAt.name+"! "
     }
     if(lostDefender>0){
-      message="El jugador "+" ha perdut "+lostDefender+" tropes!"
+      message+="El jugador "+d.nom+" ha perdut "+lostDefender+" "+dictionary[lostDefender-1]+
+              " en "+cntryDef.name+"! "
+    }
+    this.messages.push(message)
+
+    cntryAt.troops-=lostAttacker;
+    cntryDef.troops-=lostDefender;
+
+    if(cntryAt.troops<=1){
+      this.messages.push("- L'atac de "+a.nom+" ha sigut contrarestat pel "+d.nom+"!");
+    }
+    if(cntryDef.troops<=0){
+      this.messages.push("- El pais "+cntryDef.name+" ha sigut conquistat per "+a.nom);
+    }
+    //controlem només per la banda del jugador actiu per controlar les visualitzacions
+    if(a.id == this.global.activePlayer.id){
+      this.resultDices=true;
+      this.attacker=cntryAt;
+      this.defender=cntryDef;
+      if(cntryDef.troops<=0 || cntryAt.troops<=0){
+        this.fiAttack=true;
+      }
     }
   }
 }

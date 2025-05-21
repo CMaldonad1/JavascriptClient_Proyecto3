@@ -8,9 +8,10 @@ import { GlobalService } from '../services/global.service';
 })
 export class WebsocketService {
   //My server
-  // private readonly SERVER ='ws://localhost:8080';
+  private readonly SERVER ='ws://localhost:8765';
   //JA Server
-  private readonly SERVER ='ws://10.200.1.4:8080';
+  // private readonly SERVER ='ws://localhost:8080';
+  // private readonly SERVER ='ws://10.200.1.4:8080';
 
   private socket$: WebSocketSubject<any> = webSocket(this.SERVER);
   private readonly reconInter = 5000; //5seg per reconectar
@@ -123,6 +124,16 @@ export class WebsocketService {
       }
     })
   }
+  public deployCombat(countries:any){
+    this.sendMsg({
+      action:'deploy_combat',
+      token: this.global.user.token,
+      info:{
+        sala: this.global.sala.id,
+        deploy:countries
+      }
+    })
+  }
   public invadeCountry(attacker:string, troops:number, defensor:string){
     this.sendMsg({
       action:'invade',
@@ -135,14 +146,30 @@ export class WebsocketService {
       }
     })
   }
-  public reinforce(id:number, info:any){
+  public reinforce(from:string, to:string, troops:number){
     this.sendMsg({
       action:'reinforce',
       token: this.global.user.token,
       info:{
-        sala:id,
-        info
+        sala:this.global.sala.id,
+        from:from,
+        to:to,
+        troops:troops
       }
+    })
+  }
+  public endPhase(){
+    this.sendMsg({
+      action:'next_phase',
+      token: this.global.user.token,
+      info:{
+        sala: this.global.sala.id,
+      }
+    })
+  }
+  public test(){
+    this.sendMsg({
+      action:'test',
     })
   }
   public close() {

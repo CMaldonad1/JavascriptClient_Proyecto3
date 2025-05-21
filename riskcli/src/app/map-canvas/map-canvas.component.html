@@ -1,4 +1,5 @@
 <div id="information" class="d-flex flex-row">
+  <button (click)="this.wsService.test()">Test</button>
   <!-- Modal "Abandonar partida?" -->
   <div #modal class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog boxborder position-relative">
@@ -27,7 +28,7 @@
           <h4 #timer class="ms-3 p-0 m-0">{{min}}:{{sec}}</h4>
         </div>
       </div>
-      @if(this.fase!='deploy'){
+      @if(this.fase!='deploy' && global.user.id==global.activePlayer.id){
         <div id="phases" class="boxborder">
           <div class="boxinside d-flex flex-row justify-content-between ps-3 pe-3" style='background-color: {{global.activePlayer.color}}'>
             <img id="icon" src="/img/deploy.png" alt="deployment">
@@ -35,7 +36,7 @@
             <img id="icon" src="/img/reinforcement.png" alt="deployment">
           </div>
         </div>
-        <button id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
+        <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
       }
    </div>
   <!-- Informació jugadors -->
@@ -393,30 +394,60 @@
         </div>
       </div>
    </div>
-   <!-- Daus -->
+   <!-- Daus i reforç-->
    @if(attacker!="" && defender!=""){
       <div id="dices" >
-          <button id="disconnect" type="button" class="btn btn-danger" (click)="cancelAttack()">⨉</button>
+        <button id="disconnect" type="button" class="btn btn-danger" (click)="cancel()">⨉</button>
+        <!-- sempre que no hi hagi el trigger de que no es pot atacar
+         mes o si s'han mostrat el resultats aixó s'amaga -->
+        @if(!fiAttack && !resultDices){
           <div class="d-flex flex-row justify-content-center align-items-center">
             <h5 class="m-0 me-2">Troops:</h5>
-            <input type="range" min="1" max="3" value="{{attackerDice}}" class="slider me-3 col-4" (input)="calcularDausAtacant($event)">
+            <input type="range" min="1" max="{{this.attacker.troops-1}}" value="{{attackerDice}}" class="slider me-3 col-4" (input)="calcularDausAtacant($event)">
+            <h5 class="number">{{this.attackerDice}}</h5>
           </div>
+        }
+        <!-- si estem en la fase d'atack mostrem els daus -->
+        @if(fase=='attack'){
           <app-dices
-            [attackerDices]=3
-            [defenderDices]=2
+            [attackerDices]="this.attackerDice"
+            [defenderDices]="(this.defender.troops>1)?2:1"
             [attackerColor]="this.global.activePlayer.color"
             [defenderColor]="this.global.jugadors[1].color"
             [attackerCountry]="this.attacker"
             [defenderCountry]="this.defender"
-            [attackerDices]="this.attackerDice"
           ></app-dices>
-          @if(!resultDices){
+          @if(!resultDices && !fiAttack){
             <button (click)="enviarDausResult()"
             style='background-color: {{global.activePlayer.color}}; color:white' class="btn">Atacar</button>
-          }@else{
+          }@else if(!fiAttack){
             <button (click)="resetDice()"
             style='background-color: purple; color:white' class="btn">Continuar</button>
           }
+        }@else{
+          <hr>
+          <h4>Moure tropes de</h4>
+          <h3 style="color:{{global.activePlayer.color}}">{{attacker.name}}</h3>
+          <h4>per reforçar</h4>
+          <h3 style="color:{{global.activePlayer.color}}">{{defender.name}}</h3>
+          <h5 class="col-10 text-center m-3">Una vegada confirmat el reforç acabará el teu torn</h5>
+          <button (click)="sendReinforcement()"
+          style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-3">Enviar Reforços</button>
+        }
+      </div>
+   }
+   <!-- Insertar tropes-->
+   @if(attacker!="" && fase=="deploy_combat"){
+      <div id="dices" class="text-center" >
+        <button id="disconnect" type="button" class="btn btn-danger" (click)="cancelDeployCombat()">⨉</button>
+        <h4>Indica el total de tropes que vols afegir a {{this.attacker.name}}</h4>
+        <div class="d-flex flex-row justify-content-center align-items-center mt-4">
+          <h5 class="m-0 me-4">Troops:</h5>
+          <input type="range" min="1" max="{{this.global.activePlayer.tropas}}" value="{{attackerDice}}" class="slider me-3 col-4" (input)="calcularDausAtacant($event)">
+          {{this.attackerDice}}
+        </div>
+        <button (click)="saveTroops()"
+            style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-4">Insertar</button>
       </div>
    }
 </div>

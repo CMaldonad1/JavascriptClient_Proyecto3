@@ -35,7 +35,7 @@
   transform: translateY(-5px);
   -webkit-filter: drop-shadow(4px 4px 3px rgba(255, 1, 213, 0.884));
   filter: drop-shadow(4px 4px 3px rgba(255, 1, 213, 0.884));
-  fill: rgba(0, 225, 255, 0.377);
+  fill: rgba(0, 225, 255, 0.9);
 }
 :host #map .boxinside .attackto:hover {
   fill: #bac4b4 !important;
@@ -45,7 +45,13 @@
   transform: translateY(-5px);
   -webkit-filter: drop-shadow(4px 4px 3px rgba(245, 9, 9, 0.925));
   filter: drop-shadow(4px 4px 3px rgba(245, 9, 9, 0.925));
-  fill: rgba(255, 138, 4, 0.452);
+  fill: rgba(255, 138, 4, 0.192);
+}
+:host #map .boxinside .moveTroop {
+  transition: all 0.2s ease !important;
+  transform: translateY(-5px);
+  -webkit-filter: drop-shadow(4px 4px 3px rgba(245, 9, 9, 0.925));
+  filter: drop-shadow(4px 4px 3px rgba(245, 9, 9, 0.925));
 }
 :host #map .boxinside .unclickable {
   pointer-events: none;
@@ -154,4 +160,11 @@
 :host #dices #disconnect {
   margin-left: -15px;
   margin-top: 10px;
+}
+:host #dices .number {
+  background-color: white;
+  border-radius: 50%;
+  width: 25px;
+  text-align: center;
+  margin: 0px;
 }
