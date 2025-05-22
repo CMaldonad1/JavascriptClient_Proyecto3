@@ -512,8 +512,8 @@ export class MapCanvasComponent {
     }
 
     var message="- ";
-    var cntryAt=this.countryInfo[this.findCountryJson(attacker.country)].na;
-    var cntryDef=this.countryInfo[this.findCountryJson(defender.country)];
+    var cntryAt={... this.countryInfo[this.findCountryJson(attacker.country)]};
+    var cntryDef={...this.countryInfo[this.findCountryJson(defender.country)]};
     var d=this.global.jugadors[this.findPlayer(defender.player_id)];
     var a=this.global.jugadors[this.findPlayer(attacker.player_id)];
 
