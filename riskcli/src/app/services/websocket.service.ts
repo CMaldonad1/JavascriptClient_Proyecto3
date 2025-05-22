@@ -142,7 +142,7 @@ export class WebsocketService {
         sala: this.global.sala.id,
         attacker:attacker,
         troops:troops,
-        defensor:defensor
+        defender:defensor
       }
     })
   }

@@ -91,7 +91,7 @@ export class MapCanvasComponent {
     return posPlayer;
   }
   private troopsPlayers(info:any, posPlayer:number){
-    if(this.fase== 'deploy_combat'){
+    if(this.fase=='deploy_combat'){
       this.global.jugadors[posPlayer].tropas+=info.n_tropes;
     }
   }
