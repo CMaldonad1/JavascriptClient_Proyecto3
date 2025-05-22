@@ -91,16 +91,9 @@ export class MapCanvasComponent {
     return posPlayer;
   }
   private troopsPlayers(info:any, posPlayer:number){
-      var troops=0;
-      switch(this.fase){
-        case 'deploy':
-          troops=1;
-          break;
-        case 'deploy_combat':
-          troops=info.n_tropes;
-          break;
-      }
-      this.global.jugadors[posPlayer].tropas+=troops;
+    if(this.fase== 'deploy_combat'){
+      this.global.jugadors[posPlayer].tropas+=info.n_tropes;
+    }
   }
   public surrender(){
     this.wsService.surrenderGame();
@@ -267,7 +260,6 @@ export class MapCanvasComponent {
       var idPlayer=this.findPlayer(countryOwner);
       if(countryOwner==this.global.activePlayer.id || countryOwner==""){
         this.wsService.placeTroop(regionId);
-        this.global.jugadors[idPlayer].tropas-=1;
       }else{
         this.messages.push('<b style="color: red;">- Aquest territory es propietat de '+this.global.jugadors[idPlayer].nom+'</b>');
         this.unblock="auto";
