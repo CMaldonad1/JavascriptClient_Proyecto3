@@ -264,10 +264,11 @@ export class MapCanvasComponent {
   private deploymentPhase(countrySelected:any, regionId:string){
       this.unblock="none"; //no deixem fer mes clicks
       var countryOwner=countrySelected.player;
+      var idPlayer=this.findPlayer(countryOwner);
       if(countryOwner==this.global.activePlayer.id || countryOwner==""){
-        this.wsService.placeTroop(regionId)
+        this.wsService.placeTroop(regionId);
+        this.global.jugadors[idPlayer].tropas-=1;
       }else{
-        var idPlayer=this.findPlayer(countryOwner);
         this.messages.push('<b style="color: red;">- Aquest territory es propietat de '+this.global.jugadors[idPlayer].nom+'</b>');
         this.unblock="auto";
       }
@@ -275,7 +276,7 @@ export class MapCanvasComponent {
   //selecció del country on es vol afegir tropes
     // $$$$$ %%%%%% canviar alert per modal !!!!!!
   private deployCombatPhase(countrySelected:any){
-    if(this.global.activePlayer.tropas==0){
+    if(this.global.activePlayer.tropas>0){
       this.attacker=countrySelected;
       var selected = this.svgRef.nativeElement.querySelector<SVGElement>(`#${countrySelected.country}`);
       selected?.classList.add('selected')
@@ -512,8 +513,8 @@ export class MapCanvasComponent {
     }
 
     var message="- ";
-    var cntryAt={... this.countryInfo[this.findCountryJson(attacker.country)]};
-    var cntryDef={...this.countryInfo[this.findCountryJson(defender.country)]};
+    var cntryAt=this.countryInfo[this.findCountryJson(attacker.country)];
+    var cntryDef=this.countryInfo[this.findCountryJson(defender.country)];
     var d=this.global.jugadors[this.findPlayer(defender.player_id)];
     var a=this.global.jugadors[this.findPlayer(attacker.player_id)];
 

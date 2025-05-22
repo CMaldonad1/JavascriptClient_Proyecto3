@@ -37,9 +37,7 @@
           </div>
         </div>
       }
-      @if(this.fase=='attack'){
-        <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
-      }
+      <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
    </div>
   <!-- Informació jugadors -->
   <div class="ms-3 mt-1 d-flex flex-row flex-wrap col-1 position-absolute align-items-center h-100" >
