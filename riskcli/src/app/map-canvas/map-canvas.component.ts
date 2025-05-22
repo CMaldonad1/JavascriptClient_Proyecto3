@@ -39,6 +39,7 @@ export class MapCanvasComponent {
   clickDelay: number = 600; // ms
   attacker:any = "";
   defender:any = "";
+  defenderID:number=-1;
   reinfTroops:number=1;
   attackerDice:number=1;
   resultDices:boolean=false;
@@ -315,6 +316,7 @@ export class MapCanvasComponent {
       //si ja hi ha un atacker verifiquem que el 2n country seleccionat es atacable
       }else{
         if(this.attacker.borders.includes(countrySelected.country)){
+          this.defenderID=this.findPlayer(countrySelected.player);
           this.defender=countrySelected;
         }else{
           this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+this.attacker.name+'</b>');
@@ -437,6 +439,7 @@ export class MapCanvasComponent {
     this.resetStatusBlocks();
     this.attacker="";
     this.defender="";
+    this.defenderID=-1;
     this.resultDices=false;
     this.fiAttack=false;
     this.attackerDice=1;

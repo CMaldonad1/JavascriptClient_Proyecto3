@@ -417,7 +417,7 @@
             [attackerDices]="(this.attackerDice)>3?3:this.attackerDice"
             [defenderDices]="(this.defender.troops>1)?2:1"
             [attackerColor]="this.global.activePlayer.color"
-            [defenderColor]="this.global.jugadors[1].color"
+            [defenderColor]="this.global.jugadors[this.defenderID].color"
             [attackerCountry]="this.attacker"
             [defenderCountry]="this.defender"
           ></app-dices>
