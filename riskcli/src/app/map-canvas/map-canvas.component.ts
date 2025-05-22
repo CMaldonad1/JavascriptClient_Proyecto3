@@ -39,6 +39,7 @@ export class MapCanvasComponent {
   clickDelay: number = 600; // ms
   attacker:any = "";
   defender:any = "";
+  reinfTroops:number=1;
   attackerDice:number=1;
   resultDices:boolean=false;
   troopSelect:boolean=false;
@@ -55,15 +56,15 @@ export class MapCanvasComponent {
       (message: any) => {
         if(message.response.fase){
           this.fase=message.response.fase;
-          var posPlayer=this.findPlayer(message.response.active_player);
-          this.global.activePlayer=this.global.jugadors[posPlayer];
-          this.activateSVG()
+          var posPlayer=this.setActivePlayer(message.response.active_player);
+          this.activateSVG();
           this.troopsPlayers(message.response.info, posPlayer);
-          this.messageUpdate()
+          this.messageUpdate();
+          this.colocarTropa(message.response.info.setup);
           if(message.response.info.attacker && message.response.info.defender){
             this.mostrarTirada(message.response.info.attacker, message.response.info.defender);
           }
-          this.colocarTropa(message.response.info.setup);
+
         }else if(message.response.surrender){
           if(message.response.surrender==1){
             // this.hideModal();
@@ -78,6 +79,16 @@ export class MapCanvasComponent {
   }
   ngAfterViewInit(): void {
     this.ctxHit = this.hitCanvas.nativeElement.getContext('2d')!;
+  }
+  private setActivePlayer(msgPlayer:any){
+    var posPlayer;
+    if(msgPlayer){
+      posPlayer=this.findPlayer(msgPlayer);
+      this.global.activePlayer=this.global.jugadors[posPlayer];
+    }else{
+      posPlayer=this.findPlayer(this.global.activePlayer.id);
+    }
+    return posPlayer;
   }
   private troopsPlayers(info:any, posPlayer:number){
       var troops=0;
@@ -312,7 +323,6 @@ export class MapCanvasComponent {
       }else{
         if(this.attacker.borders.includes(countrySelected.country)){
           this.defender=countrySelected;
-          //una vegada seleccionat defensor es seleccionará les tropes amb les que atacar
         }else{
           this.messages.push('<b style="color: red;">- El territori '+ countrySelected.name+' no es pot atacar desde '+this.attacker.name+'</b>');
         }
@@ -364,8 +374,14 @@ export class MapCanvasComponent {
       this.defender="";
     }
   }
+  updateReinforcement(event: Event){
+    const input = event.target as HTMLInputElement;
+    this.reinfTroops = +input.value;
+  }
   sendReinforcement(){
-    this.wsService.reinforce(this.attacker.country,this.defender.country,this.attackerDice);
+    var faseAttack=(this.fase=='attack')?true:false;
+    var respFase=(faseAttack)?'attack_deployment':'reinforce';
+    this.wsService.reinforce(respFase, this.attacker.country, this.defender.country, this.reinfTroops);
     this.cancel();
   }
   //maquem els paisos que fan frontera amb el country per atacar-los
@@ -414,16 +430,14 @@ export class MapCanvasComponent {
     })
   }
   finalitzarFase(){
-    console.info("fi:"+this.deployment);
     switch(this.fase){
+      case 'attack':
+        this.wsService.endPhase();
+        break;
       case 'deploy_combat':
         this.wsService.deployCombat(this.deployment);
         this.deployment.length=0;
-        break;
-      case 'reinforce':
-        break;
-      default:
-        break;
+      break
     }
   }
   cancel(){
@@ -433,6 +447,7 @@ export class MapCanvasComponent {
     this.resultDices=false;
     this.fiAttack=false;
     this.attackerDice=1;
+    this.reinfTroops=1;
   }
   calcularDausAtacant(event: Event){
     const input = event.target as HTMLInputElement;
@@ -444,30 +459,30 @@ export class MapCanvasComponent {
     var troops=(this.attackerDice>3?3:this.attackerDice);
     this.wsService.invadeCountry(this.attacker.country, troops, this.defender.country)
     this.resultDices=true;
-    var attackerResults:number[]=[]
-    var defenderResults:number[]=[]
-    for(var i=0; i<this.attackerDice;i++){
-      attackerResults.push(Math.floor(Math.random() * 6) + 1)
-    }
-    for(var i=0;i<2;i++){
-      defenderResults.push(Math.floor(Math.random() * 6) + 1)
-    }
-    attackerResults.sort((a,b)=> b-a)
-    defenderResults.sort((a,b)=> b-a)
-    var attacker={
-      'country':this.attacker.country,
-      'dice':attackerResults,
-      'troops':this.attacker.troops,
-      'player_id':2
-    };
-    var defender={
-      'country':this.defender.country,
-      'dice':defenderResults,
-      'troops':this.defender.troops,
-      'player_id':3
-    };
-    this.diceComponent.diceRoll(attacker.dice,defender.dice);
-    this.calcularResultat(attacker,defender);
+    // var attackerResults:number[]=[]
+    // var defenderResults:number[]=[]
+    // for(var i=0; i<this.attackerDice;i++){
+    //   attackerResults.push(Math.floor(Math.random() * 6) + 1)
+    // }
+    // for(var i=0;i<2;i++){
+    //   defenderResults.push(Math.floor(Math.random() * 6) + 1)
+    // }
+    // attackerResults.sort((a,b)=> b-a)
+    // defenderResults.sort((a,b)=> b-a)
+    // var attacker={
+    //   'country':this.attacker.country,
+    //   'dice':attackerResults,
+    //   'troops':this.attacker.troops,
+    //   'player_id':2
+    // };
+    // var defender={
+    //   'country':this.defender.country,
+    //   'dice':defenderResults,
+    //   'troops':this.defender.troops,
+    //   'player_id':3
+    // };
+    // this.diceComponent.diceRoll(attacker.dice,defender.dice);
+    // this.calcularResultat(attacker,defender);
   }
   resetDice(){
     this.attacker=this.countryInfo[this.findCountryJson(this.attacker.country)];
@@ -497,10 +512,11 @@ export class MapCanvasComponent {
     }
 
     var message="- ";
-    var cntryAt=this.countryInfo[this.findCountryJson(attacker.country)];
+    var cntryAt=this.countryInfo[this.findCountryJson(attacker.country)].na;
     var cntryDef=this.countryInfo[this.findCountryJson(defender.country)];
     var d=this.global.jugadors[this.findPlayer(defender.player_id)];
     var a=this.global.jugadors[this.findPlayer(attacker.player_id)];
+
     if(lostAttacker>0){
       message+="El jugador "+a.nom+" ha perdut "+lostAttacker+" "+dictionary[lostAttacker-1]+
                 " en "+cntryAt.name+"! "
@@ -511,8 +527,8 @@ export class MapCanvasComponent {
     }
     this.messages.push(message)
 
-    cntryAt.troops-=lostAttacker;
-    cntryDef.troops-=lostDefender;
+    cntryAt.troops=-lostAttacker;
+    cntryDef.troops=-lostDefender;
 
     if(cntryAt.troops<=1){
       this.messages.push("- L'atac de "+a.nom+" ha sigut contrarestat pel "+d.nom+"!");
@@ -525,7 +541,8 @@ export class MapCanvasComponent {
       this.resultDices=true;
       this.attacker=cntryAt;
       this.defender=cntryDef;
-      if(cntryDef.troops<=0 || cntryAt.troops<=0){
+
+      if(cntryDef.troops<=0 || cntryAt.troops<=1){
         this.fiAttack=true;
       }
     }

@@ -56,6 +56,13 @@ body .crown {
   width: 45px;
   height: 45px;
 }
+body .number {
+  background-color: white;
+  border-radius: 50%;
+  width: 25px;
+  text-align: center;
+  margin: 0px;
+}
 body #information {
   height: 100%;
   width: 100%;

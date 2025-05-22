@@ -8,10 +8,10 @@ import { GlobalService } from '../services/global.service';
 })
 export class WebsocketService {
   //My server
-  // private readonly SERVER ='ws://localhost:8765';
+  private readonly SERVER ='ws://localhost:8765';
   //JA Server
   // private readonly SERVER ='ws://localhost:8080';
-  private readonly SERVER ='ws://10.200.1.4:8080';
+  // private readonly SERVER ='ws://10.200.1.4:8080';
 
   private socket$: WebSocketSubject<any> = webSocket(this.SERVER);
   private readonly reconInter = 5000; //5seg per reconectar
@@ -146,9 +146,9 @@ export class WebsocketService {
       }
     })
   }
-  public reinforce(from:string, to:string, troops:number){
+  public reinforce(action:string, from:string, to:string, troops:number){
     this.sendMsg({
-      action:'reinforce',
+      action:action,
       token: this.global.user.token,
       info:{
         sala:this.global.sala.id,

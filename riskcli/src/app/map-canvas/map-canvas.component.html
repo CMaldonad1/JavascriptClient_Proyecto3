@@ -1,5 +1,5 @@
 <div id="information" class="d-flex flex-row">
-  <!-- <button (click)="this.wsService.test()">Test</button> -->
+  <button (click)="this.wsService.test()">Test</button>
   <!-- Modal "Abandonar partida?" -->
   <div #modal class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog boxborder position-relative">
@@ -36,6 +36,8 @@
             <img id="icon" src="/img/reinforcement.png" alt="deployment">
           </div>
         </div>
+      }
+      @if(this.fase=='attack'){
         <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
       }
    </div>
@@ -400,17 +402,21 @@
         <button id="disconnect" type="button" class="btn btn-danger" (click)="cancel()">⨉</button>
         <!-- sempre que no hi hagi el trigger de que no es pot atacar
          mes o si s'han mostrat el resultats aixó s'amaga -->
-        @if(!fiAttack && !resultDices){
-          <div class="d-flex flex-row justify-content-center align-items-center">
+        <div class="d-flex flex-row justify-content-center align-items-center">
+          @if(!fiAttack && !resultDices && fase=='attack'){
             <h5 class="m-0 me-2">Troops:</h5>
             <input type="range" min="1" max="{{this.attacker.troops-1}}" value="{{attackerDice}}" class="slider me-3 col-4" (input)="calcularDausAtacant($event)">
             <h5 class="number">{{this.attackerDice}}</h5>
-          </div>
-        }
+          }@else if(defender.troops<=0 || fase=='reinforce'){
+            <h5 class="m-0 me-2">Troops:</h5>
+            <input type="range" min="1" max="{{this.attacker.troops-1}}" value="{{reinfTroops}}" class="slider me-3 col-4" (input)="updateReinforcement($event)">
+            <h5 class="number">{{this.reinfTroops}}</h5>
+          }
+        </div>
         <!-- si estem en la fase d'atack mostrem els daus -->
         @if(fase=='attack'){
           <app-dices
-            [attackerDices]="(this.attackerDice)>3?3:1"
+            [attackerDices]="(this.attackerDice)>3?3:this.attackerDice"
             [defenderDices]="(this.defender.troops>1)?2:1"
             [attackerColor]="this.global.activePlayer.color"
             [defenderColor]="this.global.jugadors[1].color"
@@ -419,10 +425,15 @@
           ></app-dices>
           @if(!resultDices && !fiAttack){
             <button (click)="enviarDausResult()"
-            style='background-color: {{global.activePlayer.color}}; color:white' class="btn">Atacar</button>
-          }@else if(!fiAttack){
+            style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-">Atacar</button>
+          }@else if(!fiAttack && defender.troops>0){
             <button (click)="resetDice()"
             style='background-color: purple; color:white' class="btn">Continuar</button>
+          }@else {
+            <h3 style="color:{{global.activePlayer.color}}">{{defender.name}} conquistat!!</h3>
+            <h5 class="col-10 text-center m-0">Escolleix el número de tropes a traspasar</h5>
+            <button (click)="sendReinforcement()"
+            style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-3">Enviar Tropes</button>
           }
         }@else{
           <hr>

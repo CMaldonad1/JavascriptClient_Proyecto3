@@ -1,9 +1,11 @@
 <div class="col-12">
   <!-- Attacker -->
-  <div class="d-flex flex-column text-center">
+  <div class="d-flex flex-column text-center justify-content-center">
     <div>
       <h4>Atacant:</h4>
-      <h5>{{attackerCountry.name}} - Troops: {{attackerCountry.troops}}</h5>
+      <div class="d-flex flex-row justify-content-center">
+        <h5 class="me-3 m-0">{{attackerCountry.name}} - Troops:</h5><h5 class="number"> {{attackerCountry.troops}}</h5>
+      </div>
       <!-- Daus -->
       <div #attacker class="d-flex flex-row justify-content-around">
       @for(i of [].constructor(attackerDices); track i){
@@ -25,7 +27,9 @@
     <!-- Defender -->
     <div>
       <h4>Defensor:</h4>
-      <h5>{{defenderCountry.name}} - Troops: {{defenderCountry.troops}}</h5>
+      <div class="d-flex flex-row justify-content-center">
+        <h5 class="me-3 m-0">{{defenderCountry.name}} - Troops:</h5> <h5 class="number">{{defenderCountry.troops}}</h5>
+      </div>
       <!-- Daus -->
       <div #defender class="d-flex flex-row justify-content-around">
         @for(i of [].constructor(defenderDices); track i){
