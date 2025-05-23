@@ -125,9 +125,27 @@
 :host #gamestatus #phases {
   width: 240px;
 }
-:host #gamestatus #icon {
+:host #gamestatus #phases div {
+  position: relative;
+  height: 35px;
+  overflow: hidden;
+}
+:host #gamestatus #phases div img {
   height: 30px;
   width: 30px;
+  position: absolute;
+  margin: -2.5px;
+  margin-left: 250px;
+  transition: margin-left 1.5s ease-out;
+}
+:host #gamestatus #phases div .test {
+  z-index: 1;
+  margin-left: 0px !important;
+}
+:host #gamestatus #phases div #faseName {
+  margin-left: 40px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 :host #gamestatus #nextPhase {
   width: 130px;
@@ -160,4 +178,19 @@
 :host #dices #disconnect {
   margin-left: -15px;
   margin-top: 10px;
+}
+:host #winner {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  content: "";
+  width: 98.9vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.1);
+  /* o cualquier color semitransparente */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  /* para Safari */
 }

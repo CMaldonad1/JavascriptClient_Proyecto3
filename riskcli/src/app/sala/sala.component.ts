@@ -89,7 +89,6 @@ export class SalaComponent {
     this.global.jugadors=[];
     this.wsService.tornarLobby()
   }
-
   ngOnDestroy() {
     this.wsSubscription.unsubscribe();
   }

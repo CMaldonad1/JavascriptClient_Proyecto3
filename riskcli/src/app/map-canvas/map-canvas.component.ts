@@ -7,6 +7,7 @@ import { GlobalService } from '../services/global.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DicesComponent } from '../dices/dices.component';
+import confetti from 'canvas-confetti';
 
 declare var bootstrap: any;
 
@@ -46,26 +47,31 @@ export class MapCanvasComponent {
   troopSelect:boolean=false;
   fiAttack:boolean=false;
   deployment:any[]=[];
-
+  private confettiInterval: any;
   private ctxHit!: CanvasRenderingContext2D;
   countryInfo: any = continentData;
-  // $$$$$ %%%%%% canviar alert per modal !!!!!!
+
   ngOnInit() {
-    console.info(this.global.jugadors);
+    for(var i=0; i<this.global.jugadors.length; i++){
+      this.global.jugadors[i].tropas=0;
+    }
     this.img.src='img/shield.png';
     this.wsSubscription = this.wsService.canalPartida().subscribe(
       (message: any) => {
         if(message.response.fase){
           this.fase=message.response.fase;
           var posPlayer=this.setActivePlayer(message.response.active_player);
-          this.activateSVG();
-          this.troopsPlayers(message.response.info, posPlayer);
-          this.messageUpdate();
-          this.colocarTropa(message.response.info.setup);
-          if(message.response.info.attacker && message.response.info.defender){
-            this.mostrarTirada(message.response.info.attacker, message.response.info.defender);
+          if(message.response.fase!='end_game'){
+            this.activateSVG();
+            this.troopsPlayers(message.response.info, posPlayer);
+            this.messageUpdate();
+            this.colocarTropa(message.response.info.setup);
+            if(message.response.info.attacker && message.response.info.defender){
+              this.mostrarTirada(message.response.info.attacker, message.response.info.defender);
+            }
+          }else{
+            this.confetiInfinito();
           }
-
         }else if(message.response.surrender){
           if(message.response.surrender==1){
             // this.hideModal();
@@ -81,6 +87,14 @@ export class MapCanvasComponent {
   ngAfterViewInit(): void {
     this.ctxHit = this.hitCanvas.nativeElement.getContext('2d')!;
   }
+  private confetiInfinito() {
+    // Si ya se está ejecutando, evita duplicar
+    if (this.confettiInterval) return;
+
+    this.confettiInterval = setInterval(() => {
+      confetti();
+    }, 1500); // cada medio segundo
+  }
   private setActivePlayer(msgPlayer:any){
     var posPlayer;
     if(msgPlayer){
@@ -95,9 +109,6 @@ export class MapCanvasComponent {
     if(this.fase=='deploy_combat'){
       this.global.jugadors[posPlayer].tropas+=info.n_tropes;
     }
-  }
-  public surrender(){
-    this.wsService.surrenderGame();
   }
   //busquem el jugador
   private findPlayer(id:number){
@@ -198,7 +209,6 @@ export class MapCanvasComponent {
   //   this.minutes = Math.floor(this.totalSeconds / 60);
   //   this.seconds = this.totalSeconds % 60;
   // }
-
   //busquem la informació del country pel nom
   private findCountryJson(name: any){
     var country;
@@ -267,7 +277,6 @@ export class MapCanvasComponent {
       }
   }
   //selecció del country on es vol afegir tropes
-    // $$$$$ %%%%%% canviar alert per modal !!!!!!
   private deployCombatPhase(countrySelected:any){
     if(this.global.activePlayer.tropas>0){
       this.attacker=countrySelected;
@@ -291,18 +300,24 @@ export class MapCanvasComponent {
   }
   //guardem les tropes que vol ficar al territori i tanquem la finestra
   saveTroops(){
+    var idCountry=this.attacker.country;
+    var troops=this.attackerDice;
+    // var playerID=this.global.activePlayer.id;
     var aux={
-      'country':this.attacker.country,
+      'country':idCountry,
       'tropes':this.attackerDice
     }
     var posPlayer=this.findPlayer(this.global.activePlayer.id);
     this.global.jugadors[posPlayer].tropas-=this.attackerDice;
     this.global.activePlayer= this.global.jugadors[posPlayer];
-    console.info(aux);
     this.deployment.push(aux);
-    this.cancelDeployCombat()
+    var totalTroops=this.attacker.troops+troops;
+    this.cancelDeployCombat();
+    var cntryPos=this.findCountryJson(idCountry);
+    // this.updateCountryJson(this.findCountryJson(idCountry), playerID, totalTroops);
+    this.insertarNumeroTropas(this.countryInfo[cntryPos], totalTroops);
+    this.attackerDice=1;
   }
-  // $$$$$ %%%%%% canviar alert per modal !!!!!!
   private attackPhase(countrySelected:any){
       var sameClick:boolean=(this.attacker.country==countrySelected.country)?true:false;
       //si no hi ha un country seleccionat per attacar o s'ha tornat a seleccionar el mateix
@@ -323,7 +338,6 @@ export class MapCanvasComponent {
         }
       }
   }
-  // $$$$$ %%%%%% canviar alert per modal !!!!!!
   private reinforcementPhase(countrySelected:any){
     var sameClick:boolean=(this.attacker.country==countrySelected.country)?true:false;
     if(this.attacker=="" || sameClick){
@@ -377,6 +391,7 @@ export class MapCanvasComponent {
     var faseAttack=(this.fase=='attack')?true:false;
     var respFase=(faseAttack)?'attack_deployment':'reinforce';
     this.wsService.reinforce(respFase, this.attacker.country, this.defender.country, this.reinfTroops);
+    this.reinfTroops=1;
     this.cancel();
   }
   //maquem els paisos que fan frontera amb el country per atacar-los
@@ -542,5 +557,18 @@ export class MapCanvasComponent {
         this.fiAttack=true;
       }
     }
+  }
+  public surrender(){
+    this.wsService.surrenderGame();
+    this.returnToLobby();
+  }
+  returnToLobby(){
+    localStorage.removeItem('sala');
+    this.global.jugadors=[];
+    this.router.navigate(['/lobby']);
+  }
+  ngOnDestroy(){
+    this.wsSubscription.unsubscribe();
+    clearInterval(this.confettiInterval);
   }
 }
