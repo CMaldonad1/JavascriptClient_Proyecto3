@@ -1,5 +1,5 @@
 <div id="information" class="d-flex flex-row">
-  <button (click)="this.wsService.test()" class="position-absolute">Test</button>
+  <!-- <button (click)="this.wsService.test()" class="position-absolute">Test</button> -->
   <!-- Modal "Abandonar partida?" -->
   <div #modal class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog boxborder position-relative">
@@ -20,36 +20,38 @@
       </div>
     </div>
   </div>
-  @if(this.fase!='deploy' && this.fase!='end_game'){
   <!-- counter e info de partida -->
-    <div id="gamestatus" class="d-flex flex-row justify-content-between align-items-center mt-4">
+    <div id="gamestatus" class="d-flex flex-row align-items-center mt-4">
+      <div id="phases" class="boxborder">
+        <div class="boxinside d-flex flex-row align-items-center ps-3 pe-3" style='background-color: {{global.activePlayer.color}}'>
+          <img src="/img/deployIcon.png" alt="deployment" [ngClass]="{'test': this.fase=='deploy'}">
+          <img src="/img/deploy.png" alt="deployment" [ngClass]="{'test': this.fase=='deploy_combat'}">
+          <img src="/img/canon.png" alt="deployment" [ngClass]="{'test': this.fase=='attack' || this.fase=='attack_reinforce'}">
+          <img src="/img/reinforcement.png" alt="deployment" [ngClass]="{'test': this.fase=='reinforce'}">
+          <h4 id="faseName">{{fase}}</h4>
+        </div>
+      </div>
+      @if(global.user.id==global.activePlayer.id && this.fase!='deploy'){
+        <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
+      }
+      @if(this.fase!='deploy' && this.fase!='end_game'){
       <div id="timer" class="boxborder">
         <div class="boxinside align-items-center ps-3 d-flex" style='background-color: {{global.activePlayer.color}}'>
           <h4 class="p-0 m-0">Temps:</h4>
           <h4 #timer class="ms-3 p-0 m-0">{{min}}:{{sec}}</h4>
         </div>
       </div>
-      @if(global.user.id==global.activePlayer.id){
-        <div id="phases" class="boxborder">
-          <div class="boxinside d-flex flex-row align-items-center ps-3 pe-3" style='background-color: {{global.activePlayer.color}}'>
-            <img src="/img/deploy.png" alt="deployment" [ngClass]="{'test': this.fase=='deploy_combat'}">
-            <img src="/img/canon.png" alt="deployment" [ngClass]="{'test': this.fase=='attack'}">
-            <img src="/img/reinforcement.png" alt="deployment" [ngClass]="{'test': this.fase=='reinforce'}">
-            <h4 id="faseName">{{fase}}</h4>
-          </div>
-        </div>
       }
-      <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
     </div>
-  }
+
   <!-- Informació jugadors -->
-  <div class="ms-2 mt-1 d-flex flex-row flex-wrap col-1 position-absolute align-items-center h-100" >
-    <div *ngFor="let item of [].constructor(global.sala.connected); let i = index">
+  <div #jugs id="panelJugadors" class="ms-2 mt-1 d-flex flex-row flex-wrap col-1 position-absolute align-items-center" >
+    <div *ngFor="let item of [].constructor(global.sala.connected); let i = index" id="{{global.jugadors[i].id}}" class="sorter">
       <div id="jugador" class="boxborder mb-1 position-relative">
         @if(global.activePlayer.id==global.jugadors[i].id && fase!="end_game"){
           <img id="activeBorder" src="/img/borderActive.png">
         }
-        <div id="{{global.jugadors[i].id}}" class="boxinside d-flex flex-row" style='background-color: {{global.jugadors[i].color}}'>
+        <div id="{{global.jugadors[i].id}}" class="boxinside d-flex flex-row sorter" style='background-color: {{global.jugadors[i].color}}'>
           <div class="d-flex flex-row align-items-center position-relative jugador{{i}}">
             <img src="/img/soldierIcon.JPG" class="icon_jugador" />
             @if(global.sala.admin_id==global.jugadors[i].id){
@@ -391,9 +393,9 @@
   <!-- Chat d'events -->
    <div id="missatges" class="mt-1">
       <h3 class="text-center">Estatus Partida</h3>
-      <div id="msg">
+      <div id="msg" #logMissatges>
         <div *ngFor="let message of messages" id="msgText">
-          <div [innerHTML]="message"></div>
+          <div [innerHTML]="message" class="m-0 p-0"></div>
         </div>
       </div>
    </div>
@@ -404,7 +406,7 @@
         <!-- sempre que no hi hagi el trigger de que no es pot atacar
          mes o si s'han mostrat el resultats aixó s'amaga -->
         <div class="d-flex flex-row justify-content-center align-items-center">
-          @if(!fiAttack && !resultDices && fase=='attack'){
+          @if(!fiAttack && !resultDices && (fase=='attack' || fase=='attack_reinforce')){
             <h5 class="m-0 me-2">Troops:</h5>
             <input type="range" min="1" max="{{this.attacker.troops-1}}" value="{{attackerDice}}" class="slider me-3 col-4" (input)="calcularDausAtacant($event)">
             <h5 class="number">{{this.attackerDice}}</h5>
@@ -415,7 +417,7 @@
           }
         </div>
         <!-- si estem en la fase d'atack mostrem els daus -->
-        @if(fase=='attack'){
+        @if(fase=='attack' || fase=='attack_reinforce'){
           <app-dices
             [attackerDices]="(this.attackerDice)>3?3:this.attackerDice"
             [defenderDices]="(this.defender.troops>1)?2:1"

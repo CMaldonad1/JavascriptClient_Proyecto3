@@ -9,10 +9,9 @@ body {
 }
 body {
   font-family: 'FinalFantasy';
+  position: fixed;
   background-size: cover;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-image: url(../public/img/background.jpg);
+  background: url(../public/img/background.jpg) no-repeat center center;
 }
 body input {
   font-family: sans-serif;

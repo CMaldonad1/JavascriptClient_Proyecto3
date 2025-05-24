@@ -62,6 +62,9 @@
   position: relative;
   color: black;
 }
+#menubox #login #salas #buttonSalas {
+  width: 320px;
+}
 #menubox #login #salas #llistatSalas {
   height: 250px;
   overflow-y: scroll;
@@ -104,21 +107,21 @@
   white-space: nowrap;
   border-radius: 50px;
   width: 0px;
-  margin-left: 2%;
+  margin-left: 5px;
 }
 #menubox #login #salas #modalsection:hover #btnmodal {
   transform: rotate(90deg);
   transform-origin: 50% 50%;
 }
 #menubox #login #salas #modalsection:hover #btnmodaltext {
-  width: 100%;
+  width: 170px;
 }
 #menubox #login #salas #sala {
   background-color: #C0C0C0;
   position: relative;
   border-radius: 10px;
   padding: 4%;
-  width: 350px;
+  width: 320px;
   box-shadow: 5px 5px 10px 0px black;
 }
 #menubox #login #salas #sala:before {

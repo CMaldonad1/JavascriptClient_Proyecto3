@@ -1,4 +1,5 @@
 @box_width: 230px;
+@height: 550px;
 @message: 260px;
 @hoverColor: rgb(186, 196, 180);
 :host{
@@ -69,33 +70,48 @@
     height: @box_width+20;
     width:106px;
   }
-  #jugador{
-    width:@box_width;
-    flex-shrink: 0;
-    #jugInfo{
-      max-width:60%;
-      white-space: nowrap;
+  #panelJugadors{
+    height: calc(@height * 1.09);
+    display:flex;
+    flex: column;
+    .sorter{
+      order:2;
+      transition: all 0.5s ease;
     }
-    .boxinside{
-      padding:10px;
-      width:100%;
-      overflow: hidden;
+    .first{
+      order:1;
     }
-    .crown{
-      margin-left: -12%;
-      margin-top: 15%;
+    #jugador{
+      width:@box_width;
+      flex-shrink: 0;
+      #jugInfo{
+        max-width:60%;
+        white-space: nowrap;
+      }
+      .boxinside{
+        padding:10px;
+        width:100%;
+        overflow: hidden;
+      }
+      .crown{
+        margin-left: -12%;
+        margin-top: 15%;
+      }
+      .card{
+        width:25px;
+      }
+      .soldier{
+        width:30px;
+        height:30px;
+      }
+      .qty{
+        font-size: 20px;
+        height:30px;
+        width: 35px;
+      }
     }
-    .card{
-      width:25px;
-    }
-    .soldier{
-      width:30px;
-      height:30px;
-    }
-    .qty{
-      font-size: 20px;
-      height:30px;
-      width: 35px;
+    .activePlayer{
+      order:1;
     }
   }
   #missatges{
@@ -106,8 +122,8 @@
       padding:12px;
       background-color: rgba(0, 0, 0, 0.61);
       border-radius: 15px;
-      overflow-y: scroll;
-      height:90%;
+      overflow-y:auto;
+      height:@height;
       width:@message;
       #msgText{
         font-family: 'Times New Roman', Times, serif;
@@ -119,13 +135,14 @@
     flex:row;
     position: absolute;
     height:40px;
-    width:700px;
-    margin-left: calc(@box_width + 85px);
+    width:900px;
+    margin-left: calc(@box_width + 50px);
     #timer{
       width:165px;
+      margin-left:90px;
     }
     #phases{
-      width:240px;
+      width:270px;
       div{
         position:relative;
         height:35px;
@@ -149,9 +166,9 @@
         }
       }
     }
-
     #nextPhase{
-      width:130px;
+      width:150px;
+      margin-left:90px;
     }
     .boxinside{
       padding:5px;
@@ -161,8 +178,8 @@
     width: 400px;
     position:absolute;
     display:flex;
-    top:50%;
-    left:50%;
+    top:335px;
+    left:650px;
     transform: translate(-50%, -50%);
     flex-direction: column;
     align-items: center;
