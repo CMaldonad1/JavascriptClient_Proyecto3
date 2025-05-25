@@ -20,7 +20,7 @@
     "player":"",
     "troops":0,
     "borders":[
-      "GB",
+      "IS",
       "SC",
       "WE",
       "NE"
@@ -411,7 +411,6 @@
     "player":"",
     "troops":0,
     "borders":[
-      "ID",
       "NG",
       "WA"
     ]

@@ -458,7 +458,7 @@
         <div class="d-flex flex-row justify-content-center align-items-center mt-4">
           <h5 class="m-0 me-4">Troops:</h5>
           <input type="range" min="1" max="{{this.global.activePlayer.tropas}}" value="{{attackerDice}}" class="slider me-3 col-4" (input)="calcularDausAtacant($event)">
-          {{this.attackerDice}}
+          <h5 class="number">{{this.attackerDice}}</h5>
         </div>
         <button (click)="saveTroops()"
             style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-4">Insertar</button>

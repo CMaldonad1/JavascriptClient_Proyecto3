@@ -61,12 +61,17 @@ export class MapCanvasComponent {
     this.wsSubscription = this.wsService.canalPartida().subscribe(
       (message: any) => {
         if(message.response.fase){
-          this.fase=message.response.fase;
+          //mirem si hi ha canvi de fase en els missatges
+          var auxFase=message.response.fase;
+          var faseNova=(this.fase!=auxFase || auxFase=='deploy')?true:false;
+          this.fase=auxFase;
           var posPlayer=this.setActivePlayer(message.response.active_player);
           if(this.fase!='end_game'){
             this.activateSVG();
             this.troopsPlayers(message.response.info, posPlayer);
-            this.messageUpdate();
+            if(faseNova){
+              this.messageUpdate();
+            }
             this.colocarTropa(message.response.info.setup);
             if(message.response.info.attacker && message.response.info.defender){
               this.mostrarTirada(message.response.info.attacker, message.response.info.defender);
@@ -119,6 +124,8 @@ export class MapCanvasComponent {
   private troopsPlayers(info:any, posPlayer:number){
     if(this.fase=='deploy_combat'){
       this.global.jugadors[posPlayer].tropas+=info.n_tropes;
+    }else{
+      this.global.jugadors[posPlayer].tropas=0;
     }
   }
   //busquem el jugador
@@ -495,7 +502,9 @@ export class MapCanvasComponent {
   }
   private mostrarTirada(attacker:any, defender:any){
     if(attacker!="" && defender!=""){
-      this.diceComponent.diceRoll(attacker.dice,defender.dice);
+      if(this.global.activePlayer.id==this.global.user.id){
+        this.diceComponent.diceRoll(attacker.dice,defender.dice);
+      }
       this.calcularResultat(attacker,defender);
     }
   }
@@ -524,7 +533,7 @@ export class MapCanvasComponent {
       message+="El jugador "+d.nom+" ha perdut "+lostDefender+" "+dictionary[lostDefender-1]+
               " en "+cntryDef.name+"! "
     }
-    console.info('test')
+
     this.messages.push(message);
     cntryAt.troops=-lostAttacker;
     cntryDef.troops=-lostDefender;
