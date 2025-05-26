@@ -525,9 +525,14 @@ export class MapCanvasComponent {
     var message="- ";
     var cntryAt=this.countryInfo[this.findCountryJson(attacker.country)];
     var cntryDef=this.countryInfo[this.findCountryJson(defender.country)];
-    var d=this.global.jugadors[this.findPlayer(defender.player_id)];
-    var a=this.global.jugadors[this.findPlayer(attacker.player_id)];
-
+    var posAt=this.findPlayer(attacker.player_id);
+    var posDef=this.findPlayer(defender.player_id);
+    var d=this.global.jugadors[posDef];
+    var a=this.global.jugadors[posAt];
+    console.info("Index Atack. "+posAt);
+    console.info("Atack. "+a);
+    console.info("Index Def. "+posDef);
+    console.info("Def. "+d);
     if(lostAttacker>0){
       message+="El jugador "+a.nom+" ha perdut "+lostAttacker+" "+dictionary[lostAttacker-1]+
                 " en "+cntryAt.name+"! "

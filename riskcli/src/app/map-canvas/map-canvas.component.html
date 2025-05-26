@@ -438,7 +438,7 @@
             <button (click)="sendReinforcement()"
             style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-3">Enviar Tropes</button>
           }
-        }@else{
+        }@else if(attacker!="" && defender!=""){
           <hr>
           <h4>Moure tropes de</h4>
           <h3 style="color:{{global.activePlayer.color}}">{{attacker.name}}</h3>
