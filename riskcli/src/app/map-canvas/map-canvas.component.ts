@@ -529,10 +529,7 @@ export class MapCanvasComponent {
     var posDef=this.findPlayer(defender.player_id);
     var d=this.global.jugadors[posDef];
     var a=this.global.jugadors[posAt];
-    console.info("Index Atack. "+posAt);
-    console.info("Atack. "+a);
-    console.info("Index Def. "+posDef);
-    console.info("Def. "+d);
+
     if(lostAttacker>0){
       message+="El jugador "+a.nom+" ha perdut "+lostAttacker+" "+dictionary[lostAttacker-1]+
                 " en "+cntryAt.name+"! "
@@ -554,7 +551,7 @@ export class MapCanvasComponent {
     }
     this.mostrarUltimMissatge();
     //controlem només per la banda del jugador actiu per controlar les visualitzacions
-    if(a.id == this.global.activePlayer.id){
+    if(a.id == this.global.user.id){
       this.resultDices=true;
       this.attacker=cntryAt;
       this.defender=cntryDef;
