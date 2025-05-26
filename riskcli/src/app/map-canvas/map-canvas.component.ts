@@ -408,7 +408,7 @@ export class MapCanvasComponent {
   }
   sendReinforcement(){
     var faseAttack=(this.fase=='attack_reinforce')?true:false;
-    var respFase=(faseAttack)?'attack_deployment':'reinforce';
+    var respFase=(faseAttack)?'attack_reinforce':'reinforce';
     this.wsService.reinforce(respFase, this.attacker.country, this.defender.country, this.reinfTroops);
     this.reinfTroops=1;
     this.cancel();
