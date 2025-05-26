@@ -466,7 +466,10 @@ export class MapCanvasComponent {
       case 'deploy_combat':
         this.wsService.deployCombat(this.deployment);
         this.deployment.length=0;
-      break
+        break;
+      case 'reinforce':
+        this.wsService.reinforce('reinforce','','',0);
+        break;
     }
   }
   cancel(){
