@@ -471,6 +471,7 @@ export class MapCanvasComponent {
         this.wsService.reinforce('reinforce','','',0);
         break;
     }
+    this.cancel();
   }
   cancel(){
     this.resetStatusBlocks();
@@ -499,7 +500,8 @@ export class MapCanvasComponent {
     if(this.attacker.troops==1 || this.defender.player==this.global.user.id){
       this.cancel()
     }else{
-      this.diceComponent.actualizarDaus()
+      this.diceComponent.actualizarDaus();
+      this.attackerDice=this.attacker.troops-1;
       this.resultDices=false;
     }
   }
@@ -523,8 +525,8 @@ export class MapCanvasComponent {
     }
 
     var message="- ";
-    var cntryAt=this.countryInfo[this.findCountryJson(attacker.country)];
-    var cntryDef=this.countryInfo[this.findCountryJson(defender.country)];
+    var cntryAt=JSON.parse(JSON.stringify(this.countryInfo[this.findCountryJson(attacker.country)]));
+    var cntryDef=JSON.parse(JSON.stringify(this.countryInfo[this.findCountryJson(defender.country)]));
     var posAt=this.findPlayer(attacker.player_id);
     var posDef=this.findPlayer(defender.player_id);
     var d=this.global.jugadors[posDef];
@@ -538,10 +540,17 @@ export class MapCanvasComponent {
       message+="El jugador "+d.nom+" ha perdut "+lostDefender+" "+dictionary[lostDefender-1]+
               " en "+cntryDef.name+"! "
     }
+    console.info("1-Defender troops "+cntryDef.troops);
+    console.info("Troops Lost "+lostDefender);
+    console.info("1-Attacker troops "+cntryAt.troops);
+    console.info("Troops Lost "+lostAttacker);
 
     this.messages.push(message);
-    cntryAt.troops=-lostAttacker;
-    cntryDef.troops=-lostDefender;
+    cntryAt.troops-=lostAttacker;
+    cntryDef.troops-=lostDefender;
+
+    console.info("2-Defender troops "+cntryDef.troops);
+    console.info("2-Attacker troops "+cntryAt.troops);
 
     if(cntryAt.troops<=1){
       this.messages.push("- L'atac de "+a.nom+" ha sigut contrarestat pel "+d.nom+"!");
@@ -553,14 +562,13 @@ export class MapCanvasComponent {
     //controlem només per la banda del jugador actiu per controlar les visualitzacions
     if(a.id == this.global.user.id){
       this.resultDices=true;
-      this.attacker=cntryAt;
-      this.defender=cntryDef;
+      // this.attacker=cntryAt;
+      // this.defender=cntryDef;
 
       if(cntryDef.troops<=0 || cntryAt.troops<=1){
         this.fiAttack=true;
       }
     }
-    this.attackerDice=this.attacker.troops-1;
   }
   public surrender(){
     this.wsService.surrenderGame();
@@ -580,5 +588,4 @@ export class MapCanvasComponent {
     this.wsSubscription.unsubscribe();
     clearInterval(this.confettiInterval);
   }
-
 }

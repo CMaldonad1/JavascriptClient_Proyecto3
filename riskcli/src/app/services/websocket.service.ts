@@ -10,8 +10,8 @@ export class WebsocketService {
   //My server
   // private readonly SERVER ='ws://localhost:8765';
   //JA Server
-  // private readonly SERVER ='ws://localhost:8080';
-  private readonly SERVER ='ws://10.200.1.4:8080';
+  private readonly SERVER ='ws://localhost:8080';
+  // private readonly SERVER ='ws://10.200.1.4:8080';
 
   private socket$: WebSocketSubject<any> = webSocket(this.SERVER);
   private readonly reconInter = 5000; //5seg per reconectar

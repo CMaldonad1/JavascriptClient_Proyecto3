@@ -400,7 +400,7 @@
       </div>
    </div>
    <!-- Daus i reforç-->
-   @if(attacker!="" && defender!=""){
+   @if(attacker!="" && defender!="" && fase!="end_game"){
       <div id="dices" >
         <button id="disconnect" type="button" class="btn btn-danger" (click)="cancel()">⨉</button>
         <!-- sempre que no hi hagi el trigger de que no es pot atacar
@@ -433,7 +433,7 @@
             <button (click)="resetDice()"
             style='background-color: purple; color:white' class="btn">Continuar</button>
           }@else {
-            <h3 style="color:{{global.activePlayer.color}}">{{defender.name}} conquistat!!</h3>
+            <h3 class="text-center m-0"style="color:{{global.activePlayer.color}}">{{defender.name}} conquistat!!</h3>
             <h5 class="col-10 text-center m-0">Escolleix el número de tropes a traspasar</h5>
             <button (click)="sendReinforcement()"
             style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-3">Enviar Tropes</button>
@@ -468,9 +468,11 @@
 @if(fase=="end_game"){
   <div id="winner">
     <img src="/img/winnerImage.png" >
-    <div class="d-flex align-items-center flex-column ms-5 me-5">
-      <h1>Winner</h1>
-      <h1 style="color:{{this.global.activePlayer.color}}">{{this.global.activePlayer.nom}}</h1>
+    <div class="d-flex align-items-center flex-column ms-2 me-2">
+      <div id="winnerBoard">
+         <h1>Winner</h1>
+        <h1 style="color:{{this.global.activePlayer.color}}">{{this.global.activePlayer.nom}}</h1>
+      </div>
       <button type="button" class="btn btn-success mt-5" (click)="returnToLobby()">Tornar al Lobby</button>
     </div>
     <img src="/img/winnerImage.png" style="transform:scaleX(-1)">
