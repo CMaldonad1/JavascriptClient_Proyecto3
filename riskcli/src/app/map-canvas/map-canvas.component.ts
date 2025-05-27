@@ -51,7 +51,7 @@ export class MapCanvasComponent {
   deployment:any[]=[];
   private confettiInterval: any;
   private ctxHit!: CanvasRenderingContext2D;
-  countryInfo: any = continentData;
+  countryInfo: any = structuredClone(continentData);
 
   ngOnInit() {
     for(var i=0; i<this.global.jugadors.length; i++){
@@ -577,7 +577,6 @@ export class MapCanvasComponent {
   returnToLobby(){
     localStorage.removeItem('sala');
     this.global.jugadors=[];
-    this.countryInfo=[];
     this.router.navigate(['/lobby']);
   }
   private mostrarUltimMissatge(){
