@@ -47,6 +47,8 @@ export class LoginComponent implements OnInit, OnDestroy{
           this.error="";
           this.global.user.token=message.response['token'];
           this.global.user.id=message.response['id'];
+          // this.global.user.wins=message.response['user'].wins;
+          // this.global.user.games=message.response['user'].games;
           localStorage.setItem('user', JSON.stringify(this.global.user.toJSON()));
           this.goToLobby()
         }else{

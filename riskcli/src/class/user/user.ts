@@ -5,6 +5,8 @@ export class User {
     public _nom: string = "",
     public _id: number=-999,
     public _token: string= "",
+    public _wins: number=0,
+    public _games: number=0,
     public _color: string ="",
     public _turn: boolean =false,
     public _tropas: number=0,
@@ -16,6 +18,8 @@ export class User {
       obj._nom,
       obj._id,
       obj._token,
+      obj._wins,
+      obj._games,
       obj._color,
       obj._turn,
       obj._tropas
@@ -27,6 +31,8 @@ export class User {
       _nom: this._nom,
       _id: this._id,
       _token: this._token,
+      _wins: this._wins,
+      _games: this._games,
       _color: this._color,
       _turn: this._turn,
       _tropas: this._tropas,
@@ -42,6 +48,12 @@ export class User {
   }
   get id(): number{
     return this._id;
+  }
+  get wins(): number{
+    return this._wins;
+  }
+  get games(): number{
+    return this._games;
   }
   get color(): string{
     return this._color;
@@ -69,5 +81,11 @@ export class User {
   }
   set tropas(tropas:number){
     this._tropas=tropas;
+  }
+  set wins(wins:number){
+    this._wins=wins;
+  }
+  set games(games:number){
+    this._games=games;
   }
 }

@@ -164,8 +164,31 @@
     }
   }
 }
+#userMenu{
+  position:absolute;
+  margin-top:-300px;
+  margin-left:-650px;
+  height:200px;
+}
+.userButton{
+  margin-top:-80px !important;
+  margin-left: -660px !important;
+  &:hover{
+    text-shadow: white 0px 0px 3px,
+              0 0 0.5em white,
+              0 0 0.2em white;
+  }
+}
+.reverseImage{
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
 .modal{
   transition: 0.8s all;
+}
+.icon_jugador{
+  width:100px;
+  height:100px;
 }
 @media (min-width: 576px) {
   .modal {
