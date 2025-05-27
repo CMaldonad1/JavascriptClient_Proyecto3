@@ -577,6 +577,7 @@ export class MapCanvasComponent {
   returnToLobby(){
     localStorage.removeItem('sala');
     this.global.jugadors=[];
+    this.countryInfo=[];
     this.router.navigate(['/lobby']);
   }
   private mostrarUltimMissatge(){
