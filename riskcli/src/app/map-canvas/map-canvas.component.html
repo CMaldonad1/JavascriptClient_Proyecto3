@@ -21,29 +21,28 @@
     </div>
   </div>
   <!-- counter e info de partida -->
-    <div id="gamestatus" class="d-flex flex-row align-items-center mt-4">
-      <div id="phases" class="boxborder">
-        <div class="boxinside d-flex flex-row align-items-center ps-3 pe-3" style='background-color: {{global.activePlayer.color}}'>
-          <img src="/img/deployIcon.png" alt="deployment" [ngClass]="{'test': this.fase=='deploy'}">
-          <img src="/img/deploy.png" alt="deployment" [ngClass]="{'test': this.fase=='deploy_combat'}">
-          <img src="/img/canon.png" alt="deployment" [ngClass]="{'test': this.fase=='attack' || this.fase=='attack_reinforce'}">
-          <img src="/img/reinforcement.png" alt="deployment" [ngClass]="{'test': this.fase=='reinforce'}">
-          <h4 id="faseName">{{fase}}</h4>
-        </div>
+  <div id="gamestatus" class="d-flex flex-row align-items-center mt-4">
+    <div id="phases" class="boxborder">
+      <div class="boxinside d-flex flex-row align-items-center ps-3 pe-3" style='background-color: {{global.activePlayer.color}}'>
+        <img src="/img/deployIcon.png" alt="deployment" [ngClass]="{'test': this.fase=='deploy'}">
+        <img src="/img/deploy.png" alt="deployment" [ngClass]="{'test': this.fase=='deploy_combat'}">
+        <img src="/img/canon.png" alt="deployment" [ngClass]="{'test': this.fase=='attack' || this.fase=='attack_reinforce'}">
+        <img src="/img/reinforcement.png" alt="deployment" [ngClass]="{'test': this.fase=='reinforce'}">
+        <h4 id="faseName">{{fase}}</h4>
       </div>
-      @if(global.user.id==global.activePlayer.id && this.fase!='deploy'){
-        <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
-      }
-      @if(this.fase!='deploy' && this.fase!='end_game'){
-      <div id="timer" class="boxborder">
-        <div class="boxinside align-items-center ps-3 d-flex" style='background-color: {{global.activePlayer.color}}'>
-          <h4 class="p-0 m-0">Temps:</h4>
-          <h4 #timer class="ms-3 p-0 m-0">{{min}}:{{sec}}</h4>
-        </div>
-      </div>
-      }
     </div>
-
+    @if(global.user.id==global.activePlayer.id && this.fase!='deploy'){
+      <button (click)="finalitzarFase()" id="nextPhase" type="button" class="btn btn-success" [disabled]="global.user.id==global.activePlayer.id?null:true">Finalitzar Fase</button>
+    }
+    @if(this.fase!='end_game'){
+    <div id="timer" class="boxborder">
+      <div class="boxinside align-items-center ps-3 d-flex" style='background-color: {{global.activePlayer.color}}'>
+        <h4 class="p-0 m-0">Temps:</h4>
+        <h4 #timer class="ms-2 p-0 m-0">{{tempsRestant}}</h4>
+      </div>
+    </div>
+    }
+  </div>
   <!-- Informació jugadors -->
   <div #jugs id="panelJugadors" class="ms-2 mt-1 d-flex flex-row flex-wrap col-1 position-absolute align-items-center" >
     <div *ngFor="let item of [].constructor(global.sala.connected); let i = index" id="{{global.jugadors[i].id}}" class="sorter">

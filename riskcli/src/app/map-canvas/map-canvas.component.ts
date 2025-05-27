@@ -34,9 +34,9 @@ export class MapCanvasComponent {
   messages: any[] = [];
   fase: string = "";
   img = new Image();
-  totalTime=0;
-  min: number = 0;
-  sec: number = 0;
+  private intervalId: any;
+  totalTime:number=0;
+  tempsRestant: string = "";
   unblock: string="none"; //or auto
   lastClickTime: number = 0;
   clickDelay: number = 600; // ms
@@ -66,6 +66,11 @@ export class MapCanvasComponent {
           var faseNova=(this.fase!=auxFase || auxFase=='deploy')?true:false;
           this.fase=auxFase;
           var posPlayer=this.setActivePlayer(message.response.active_player);
+          if(this.intervalId){
+            clearInterval(this.intervalId);
+          }
+          this.totalTime=300;
+          this.startCountdown();
           if(this.fase!='end_game'){
             this.activateSVG();
             this.troopsPlayers(message.response.info, posPlayer);
@@ -212,22 +217,20 @@ export class MapCanvasComponent {
     ctx.textBaseline = 'middle';
     ctx.fillText(troops.toString(), country.x, country.y);
   }
-  // startCountdown() {
-  //   this.updateTimeDisplay();
-
-  //   this.intervalId = setInterval(() => {
-  //     if (this.totalSeconds > 0) {
-  //       this.totalSeconds--;
-  //       this.updateTimeDisplay();
-  //     } else {
-  //       clearInterval(this.intervalId); // Detener cuando llegue a 0
-  //     }
-  //   }, 1000);
-  // }
-  // updateTimeDisplay() {
-  //   this.minutes = Math.floor(this.totalSeconds / 60);
-  //   this.seconds = this.totalSeconds % 60;
-  // }
+  startCountdown() {
+    this.updateTimeDisplay();
+    this.intervalId = setInterval(() => {
+      if (this.totalTime > 0) {
+        this.totalTime--;
+        this.updateTimeDisplay();
+      } else {
+        clearInterval(this.intervalId); // Detener cuando llegue a 0
+      }
+    }, 1000);
+  }
+  updateTimeDisplay() {
+    this.tempsRestant = String(Math.floor(this.totalTime / 60)).padStart(2,"0")+":"+String(this.totalTime % 60).padStart(2,"0");
+  }
   //busquem la informació del country pel nom
   private findCountryJson(name: any){
     var country;
@@ -586,6 +589,7 @@ export class MapCanvasComponent {
   }
   ngOnDestroy(){
     this.wsSubscription.unsubscribe();
+    clearInterval(this.intervalId);
     clearInterval(this.confettiInterval);
   }
 }
