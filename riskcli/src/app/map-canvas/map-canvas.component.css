@@ -95,6 +95,9 @@
   margin-left: -12%;
   margin-top: 15%;
 }
+:host #panelJugadors #jugador .playerMarker {
+  margin-top: -20%;
+}
 :host #panelJugadors #jugador .card {
   width: 25px;
 }
@@ -232,4 +235,5 @@
   overflow: hidden;
   padding: 0px;
   margin: 0px;
+  text-shadow: white 0px 0px 3px, 0 0 0.5em white, 0 0 0.2em white;
 }

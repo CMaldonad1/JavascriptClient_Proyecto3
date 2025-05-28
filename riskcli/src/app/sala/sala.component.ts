@@ -45,9 +45,9 @@ export class SalaComponent {
       }
     );
     var sala= localStorage.getItem('sala')
-    if(sala){
+    if(sala && this.global.sala.id>0){
       this.wsService.entrarSala(Number(sala));
-    }else{
+    }else if(!sala){
       this.router.navigate(['/lobby']);
     }
   }
@@ -61,6 +61,7 @@ export class SalaComponent {
       sala.nom,
       sala.max_players,
       sala.admin_id)
+    localStorage.setItem('sala', sala.id.toString());
   }
   private infoJugadors(players: any){
     this.carregarJugadors(players);
@@ -73,7 +74,7 @@ export class SalaComponent {
     }
   }
   private afegirJugador(jugador:any, i:number){
-    this.global.jugadors.push(new User(jugador.nom, jugador.id, "",this.colorchoices[i]))
+    this.global.jugadors.push(new User(jugador.nom, jugador.id,"",this.colorchoices[i], jugador.wins,jugador.games))
   }
 
   iniciarPartida(){

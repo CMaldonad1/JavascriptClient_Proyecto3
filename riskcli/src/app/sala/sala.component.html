@@ -3,18 +3,29 @@
     <div id="salainterior" class="boxinside col-12 d-flex flex-column justify-content-center align-items-center">
       <img id="minirisk" src="/img/risk.png" alt="">
       <button id="tornarLobby" (click)="tornarLobby()" class="btn btn-danger">Tornar</button>
-      <h3><b class="me-2">SALA:</b> {{global.sala.nom}}</h3>
+      <div class="d-flex flex-row">
+        <h3><b class="me-2">SALA: </b></h3>
+        <h3 id="salaName"> {{global.sala.nom}}</h3>
+      </div>
+
       <h3><b class="me-3">Players:</b> {{global.sala.connected}} / {{global.sala.max_players}}</h3>
       <div class="mt-3 d-flex flex-row col-11 flex-wrap justify-content-center">
         @for(jugador of global.jugadors; track jugador.id){
           <div class="col-5 m-1">
             <div id="jugadorbox" class="boxborder">
               <div id="{{jugador.id}}" class="boxinside d-flex flex-row p-2 align-items-center" style='background-color: {{jugador.color}}'>
-                <img src="/img/soldierIcon.JPG" class="icon_jugador" />
-                <h5 class="ms-3">{{jugador.nom}}</h5>
+                <img src="{{jugador.img}}" class="icon_jugador" />
+                <div class="d-flex flex-column ms-3">
+                  <h5 class="p-0 m-0">{{jugador.nom}}</h5>
+                  <h6><b>Win Rate: </b> @if(jugador.games != 0){ {{(jugador.wins / jugador.games)*100}}%}@else{ 0% }</h6>
+                </div>
                 @if(global.sala.admin_id==jugador.id){
                   <img src="/img/crown.png" class="crown" />
                 }
+                @if(jugador.id==this.global.user.id){
+                  <img src="/img/playerMarker.png" class="playerMarker" />
+                }
+
               </div>
             </div>
           </div>

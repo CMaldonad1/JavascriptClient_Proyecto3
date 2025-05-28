@@ -1,5 +1,9 @@
 @silver: #C0C0C0;
 @widht: 320px;
+h4{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 .modal-content{
   h2, h5{
     font-family:FinalFantasy;
@@ -164,14 +168,20 @@
     }
   }
 }
-#userMenu{
-  position:absolute;
-  margin-top:-300px;
-  margin-left:-650px;
+#signImg{
   height:200px;
+  margin-top:-300px;
+}
+#signDiv{
+  position:absolute;
+  margin-top:-225px !important;
+}
+.userMenu{
+  position:absolute;
+  margin-left:-660px;
 }
 .userButton{
-  margin-top:-80px !important;
+  margin-top:-90px !important;
   margin-left: -660px !important;
   &:hover{
     text-shadow: white 0px 0px 3px,
@@ -189,6 +199,26 @@
 .icon_jugador{
   width:100px;
   height:100px;
+}
+.barra-externa {
+  width: 150px;
+  height: 25px;
+  background-color: #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #999;
+}
+.wins {
+  height: 100%;
+  background-color: #4caf50;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+.loss {
+  height: 100%;
+  background-color: red;
+  width: 0%;
+  transition: width 0.5s ease;
 }
 @media (min-width: 576px) {
   .modal {

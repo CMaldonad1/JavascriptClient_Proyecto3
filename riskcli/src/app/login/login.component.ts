@@ -43,12 +43,16 @@ export class LoginComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.wsSubscription = this.wsService.canalLogin().subscribe(
       (message: any) => {
+        console.info(message);
         if(message.status==200 && message.response['token']){
           this.error="";
           this.global.user.token=message.response['token'];
           this.global.user.id=message.response['id'];
-          // this.global.user.wins=message.response['user'].wins;
-          // this.global.user.games=message.response['user'].games;
+          this.global.user.wins=message.response['user'].wins;
+          this.global.user.games=message.response['user'].games;
+          if(message.response['user'].avatar!=""){
+            this.global.user.img=message.response['user'].avatar;
+          }
           localStorage.setItem('user', JSON.stringify(this.global.user.toJSON()));
           this.goToLobby()
         }else{

@@ -77,10 +77,11 @@ export class MapCanvasComponent {
             if(faseNova){
               this.messageUpdate();
             }
-            this.colocarTropa(message.response.info.setup);
             if(message.response.info.attacker && message.response.info.defender){
               this.mostrarTirada(message.response.info.attacker, message.response.info.defender);
             }
+            this.colocarTropa(message.response.info.setup);
+
           }else{
             this.confetiInfinito();
           }

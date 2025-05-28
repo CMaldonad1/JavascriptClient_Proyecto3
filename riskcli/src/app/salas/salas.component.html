@@ -39,7 +39,7 @@
           <h2 class="modaltext col-12 mb-3" style="color:white;">El Teu perfil</h2>
           <button id="disconnect" type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">⨉</button>
           <div class="d-flex flex-row justify-content-between col-12">
-            <img src="/img/soldierIcon.JPG" class="icon_jugador col-3 me-3" />
+            <img src="{{this.global.user.img}}" class="icon_jugador col-3 me-3 mt-3" />
             <div class="text-start col-9 d-flex flex-row flex-wrap">
               <h4 class="col-6">Nom:  </h4>
               <h4 class="col-5">{{this.global.user.nom}}</h4>
@@ -47,6 +47,12 @@
               <h4 class="col-5">{{this.global.user.games}}</h4>
               <h4 class="col-6">P. Guanyades: </h4>
               <h4 class="col-5">{{this.global.user.wins}}</h4>
+              <h4 class="col-6">Win Ratio: </h4>
+              <div class="barra-externa">
+                <div class="wins text-center" [ngStyle]="{ width: this.global.user.games != 0?(this.global.user.wins / this.global.user.games) * 100 +'%':'0%'}">
+                    @if(this.global.user.games != 0){ {{(this.global.user.wins / this.global.user.games)*100}}%}@else{'0%'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -101,8 +107,8 @@
     </div>
   </div>
   <!-- access al menu de jugador -->
-  <img id="userMenu" src="/img/signBoard.png" class="reverseImage">
-  <div id="userMenu" class="userButton roundbutton" data-bs-toggle="modal" data-bs-target="#modalJugador">
+  <img id="signImg" src="/img/signBoard.png" class="reverseImage userMenu">
+  <div id="signDiv" class="userButton btn userMenu" data-bs-toggle="modal" data-bs-target="#modalJugador">
     <h1>Perfil</h1>
   </div>
 </div>

@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-center col-12">
-          <button type="button" class="btn btn-danger" (click)="surrender()">Sortir de la partida</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="surrender()">Sortir de la partida</button>
         </div>
       </div>
     </div>
@@ -52,12 +52,15 @@
         }
         <div id="{{global.jugadors[i].id}}" class="boxinside d-flex flex-row sorter" style='background-color: {{global.jugadors[i].color}}'>
           <div class="d-flex flex-row align-items-center position-relative jugador{{i}}">
-            <img src="/img/soldierIcon.JPG" class="icon_jugador" />
+            <img src={{global.jugadors[i].img}} class="icon_jugador" />
             @if(global.sala.admin_id==global.jugadors[i].id){
               <img src="/img/crown.png" class="crown" />
             }
+            @if(global.jugadors[i].id==this.global.user.id){
+              <img src="/img/playerMarker.png" class="playerMarker" />
+            }
           </div>
-          <div id="jugInfo" class="d-flex flex-row flex-wrap justify-content-around ms-3">
+          <div id="jugInfo" class="d-flex flex-row flex-wrap justify-content-around ms-4">
             <h5 class="ms-1 col-12 mb-0">{{global.jugadors[i].nom}} </h5>
             <div class="d-flex flex-row col-6 align-items-center">
               <img src="/img/cards.png" class="card"/>
@@ -401,7 +404,7 @@
    <!-- Daus i reforç-->
    @if(attacker!="" && defender!="" && fase!="end_game"){
       <div id="dices" >
-        <button id="disconnect" type="button" class="btn btn-danger" (click)="cancel()">⨉</button>
+        @if(defender.troops>0){<button id="disconnect" type="button" class="btn btn-danger" (click)="cancel()">⨉</button>}
         <!-- sempre que no hi hagi el trigger de que no es pot atacar
          mes o si s'han mostrat el resultats aixó s'amaga -->
         <div class="d-flex flex-row justify-content-center align-items-center">
@@ -431,11 +434,13 @@
           }@else if(!fiAttack && defender.troops>0){
             <button (click)="resetDice()"
             style='background-color: purple; color:white' class="btn">Continuar</button>
-          }@else {
+          }@else if( defender.troops<=0 ){
             <h3 class="text-center m-0" style="color:{{global.activePlayer.color}};">{{defender.name}} conquistat!!</h3>
             <h5 class="col-10 text-center m-0">Escolleix el número de tropes a traspasar</h5>
             <button (click)="sendReinforcement()"
             style='background-color: {{global.activePlayer.color}}; color:white' class="btn mt-3">Enviar Tropes</button>
+          }@else if(this.attackerDice==1 && fiAttack){
+            <h5 class="col-10 text-center m-0">No tens mes tropes per continuar atacant!</h5>
           }
         }@else if(attacker!="" && defender!=""){
           <hr>
@@ -464,6 +469,7 @@
       </div>
    }
 </div>
+<!-- pantalla de fi de partida -->
 @if(fase=="end_game"){
   <div id="winner">
     <img src="/img/winnerImage.png" >

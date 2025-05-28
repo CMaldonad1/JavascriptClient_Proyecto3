@@ -5,9 +5,10 @@ export class User {
     public _nom: string = "",
     public _id: number=-999,
     public _token: string= "",
+    public _color: string ="",
     public _wins: number=0,
     public _games: number=0,
-    public _color: string ="",
+    public _img: string="/img/soldierIcon.JPG",
     public _turn: boolean =false,
     public _tropas: number=0,
     public _cartas: Card []=[]
@@ -18,9 +19,10 @@ export class User {
       obj._nom,
       obj._id,
       obj._token,
+      obj._color,
       obj._wins,
       obj._games,
-      obj._color,
+      obj._img,
       obj._turn,
       obj._tropas
     );
@@ -31,9 +33,10 @@ export class User {
       _nom: this._nom,
       _id: this._id,
       _token: this._token,
+      _color: this._color,
       _wins: this._wins,
       _games: this._games,
-      _color: this._color,
+      _img:this._img,
       _turn: this._turn,
       _tropas: this._tropas,
       _cartas: this._cartas
@@ -43,11 +46,14 @@ export class User {
   get nom(): string{
     return this._nom;
   }
+  get id(): number{
+    return this._id;
+  }
   get token(): string{
     return this._token;
   }
-  get id(): number{
-    return this._id;
+  get img(): string{
+    return this._img;
   }
   get wins(): number{
     return this._wins;
@@ -67,11 +73,14 @@ export class User {
   set nom(nom:string){
     this._nom=nom;
   }
+  set id(id:number){
+    this._id=id;
+  }
   set token(token:string){
     this._token=token;
   }
-  set id(id:number){
-    this._id=id;
+  set img(img:string){
+    this._img=img;
   }
   set color(color:string){
     this._color=color;
